@@ -6,10 +6,10 @@ import java.util.List;
 public class DatabaseSchema {
 
 	public static final String TABLE_NAME_GAMES = "Games";
-	public static final String TABLE_NAME_GAME_COPIES = "GameCopies";
 	public static final String TABLE_NAME_ACHIEVEMENTS = "Achievements";
 	public static final String TABLE_NAME_USERS = "Users";
 	public static final String TABLE_NAME_PLAYERS = "Players";
+	public static final String TABLE_NAME_GAME_COPIES = "GameCopies";
 	public static final String TABLE_NAME_COMMENTS = "Comments";
 	public static final String TABLE_NAME_CLANS = "Clans";
 	public static final String TABLE_NAME_ARE_FRIENDS = "areFriends";
@@ -25,18 +25,6 @@ public class DatabaseSchema {
 		+"publisher CHAR(50),"
 		+"rating CHAR(8),"
 		+"description CHAR(500))";
-	
-	public static final String CREATE_TABLE_GAME_COPIES =	 
-		"CREATE TABLE " + TABLE_NAME_GAME_COPIES
-		+"(gameKey CHAR(32),"
-		+"gameID INTEGER NOT NULL,"
-		+"ownerUsername CHAR(20),"
-		+"purchaseDate Date,"
-		+"PRIMARY KEY (gameKey),"
-		+"FOREIGN KEY (gameID) REFERENCES Games " 
-			+"ON DELETE CASCADE,"
-		+"FOREIGN KEY (ownerUsername) REFERENCES Players(username) "
-			+"ON DELETE SET NULL)";
 	
 	public static final String CREATE_TABLE_ACHIEVEMENTS =	
 		"CREATE TABLE " + TABLE_NAME_ACHIEVEMENTS
@@ -61,6 +49,18 @@ public class DatabaseSchema {
 		+"(username CHAR(20) PRIMARY KEY,"
 		+"FOREIGN KEY (username) REFERENCES Users "
 			+"ON DELETE CASCADE)";
+	
+	public static final String CREATE_TABLE_GAME_COPIES =	 
+		"CREATE TABLE " + TABLE_NAME_GAME_COPIES
+		+"(gameKey CHAR(32),"
+		+"gameID INTEGER NOT NULL,"
+		+"ownerUsername CHAR(20),"
+		+"purchaseDate Date,"
+		+"PRIMARY KEY (gameKey),"
+		+"FOREIGN KEY (gameID) REFERENCES Games " 
+			+"ON DELETE CASCADE,"
+		+"FOREIGN KEY (ownerUsername) REFERENCES Players(username) "
+			+"ON DELETE SET NULL)";
 	
 	public static final String CREATE_TABLE_COMMENTS =
 		"CREATE TABLE " + TABLE_NAME_COMMENTS
@@ -141,39 +141,44 @@ public class DatabaseSchema {
 		+"FOREIGN KEY (achievementName, gameID) REFERENCES Achievements "
 			+"ON DELETE CASCADE)";
 
+	/**
+	 * @return A List of table names, ordered the same as would be run to create them.
+	 */
 	public static List<String> getTableNames(){
-		ArrayList<String> tables = new ArrayList<String>(13);
-		tables.add(TABLE_NAME_ACHIEVEMENTS);
-		tables.add(TABLE_NAME_ADMINISTRATES); 
-		tables.add(TABLE_NAME_ADMINS);
-		tables.add(TABLE_NAME_ARE_FRIENDS); 
-		tables.add(TABLE_NAME_CLANS);
-		tables.add(TABLE_NAME_COMMENTS); 
-		tables.add(TABLE_NAME_GAME_COPIES);
-		tables.add(TABLE_NAME_GAMES); 
-		tables.add(TABLE_NAME_HAS_EARNED);
-		tables.add(TABLE_NAME_HAS_EARNED);
-		tables.add(TABLE_NAME_IS_MEMBER);
-		tables.add(TABLE_NAME_PLAYERS);
+		ArrayList<String> tables = new ArrayList<String>(12);
+		tables.add(TABLE_NAME_GAMES);
+		tables.add(TABLE_NAME_ACHIEVEMENTS); 
 		tables.add(TABLE_NAME_USERS);
+		tables.add(TABLE_NAME_PLAYERS); 
+		tables.add(TABLE_NAME_GAME_COPIES);
+		tables.add(TABLE_NAME_COMMENTS); 
+		tables.add(TABLE_NAME_CLANS);
+		tables.add(TABLE_NAME_ARE_FRIENDS); 
+		tables.add(TABLE_NAME_ADMINS);
+		tables.add(TABLE_NAME_ADMINISTRATES);
+		tables.add(TABLE_NAME_IS_MEMBER);
+		tables.add(TABLE_NAME_HAS_EARNED);
 		return tables;
 	}
 	
+	/**
+	 * @return a List of create table statements, in the order they must be
+	 * run, to preserve reference integrity
+	 */
 	public static List<String> getCreateTableStatements(){
-		ArrayList<String> statements = new ArrayList<String>(13);
+		ArrayList<String> statements = new ArrayList<String>(12);
+		statements.add(CREATE_TABLE_GAMES); 
 		statements.add(CREATE_TABLE_ACHIEVEMENTS); 
-		statements.add(CREATE_TABLE_ADMINISTRATES); 
-		statements.add(CREATE_TABLE_ADMINS);
-		statements.add(CREATE_TABLE_ARE_FRIENDS);
-		statements.add(CREATE_TABLE_CLANS);
-		statements.add(CREATE_TABLE_COMMENTS); 
-		statements.add(CREATE_TABLE_GAME_COPIES);
-		statements.add(CREATE_TABLE_GAMES);
-		statements.add(CREATE_TABLE_HAS_EARNED);
-		statements.add(CREATE_TABLE_HAS_EARNED);
-		statements.add(CREATE_TABLE_IS_MEMBER);
-		statements.add(CREATE_TABLE_PLAYERS);
 		statements.add(CREATE_TABLE_USERS);
+		statements.add(CREATE_TABLE_PLAYERS);
+		statements.add(CREATE_TABLE_GAME_COPIES);
+		statements.add(CREATE_TABLE_COMMENTS); 
+		statements.add(CREATE_TABLE_CLANS);
+		statements.add(CREATE_TABLE_ARE_FRIENDS);
+		statements.add(CREATE_TABLE_ADMINS);
+		statements.add(CREATE_TABLE_ADMINISTRATES);
+		statements.add(CREATE_TABLE_IS_MEMBER);
+		statements.add(CREATE_TABLE_HAS_EARNED);
 		return statements;
 	}
 }

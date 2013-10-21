@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -114,32 +115,28 @@ public class DatabaseManager {
 	 */
 	private boolean createTables()
 	{
-		System.out.println("Clearning database...");
 		try
 		{
+			System.out.println("Cleaning database...");
 			// Drop all relavent tables
 			Statement stmt = mDbConnection.createStatement();
 			ResultSet rs;
 			
 			List<String> tables = DatabaseSchema.getTableNames();
+			Collections.reverse(tables);
 			for (String table : tables){
 				rs = stmt.executeQuery("SELECT table_name FROM user_tables WHERE UPPER(table_name) = '"
 						+table.toUpperCase() + "'");
-				System.out.println(table.toUpperCase());
 				if(rs.next()){
 					System.out.println("Dropping " + table.toUpperCase() + " table");
 					stmt.execute("DROP TABLE "+table);
 				}
 			}
 			
-			stmt.close();
-			stmt = mDbConnection.createStatement();
-			
 			System.out.println("Building database...");
 			
 			List<String> createStatements = DatabaseSchema.getCreateTableStatements();
 			for (String statement : createStatements){
-				System.out.println(statement);
 				stmt.executeUpdate(statement);
 			}
 			
