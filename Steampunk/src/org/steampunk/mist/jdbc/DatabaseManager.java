@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Scanner;
 
 public class DatabaseManager {
@@ -29,6 +30,15 @@ public class DatabaseManager {
 	private DatabaseManager(){
 		initJDBCDriver();
 		startConnection();
+		
+		try {
+			if(!isDatabaseValid()){
+				createTables();
+			}
+		} catch (SQLException e) {
+			System.out.println("Failed to check database validity: " + e);
+			System.exit(-1);
+		}
 		// TODO: write rest of constructor
 	}
 	
@@ -36,16 +46,13 @@ public class DatabaseManager {
 	 * Loads the JDBC drivers. Must be called before any connection can be established.
 	 */
 	private void initJDBCDriver(){
-		try
-		{
+		try {
 			System.out.print("Loading JDBC driver ... ");
 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 
 			System.out.println("loaded.");
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			System.out.println("Unable to load driver\n" + e);
 			System.exit(-1);
 		}
@@ -57,66 +64,89 @@ public class DatabaseManager {
 	private void startConnection(){
 		Scanner scanner = new Scanner( System.in );
 		System.out.println("Enter oracle sql username: ");
-		mDbUserId = scanner.next();
+		//mDbUserId = scanner.next();
+		mDbUserId = "ora_x6a8";
 		System.out.println("Enter oracle sql password: ");
-		mDbPassword = scanner.next();
+		//mDbPassword = scanner.next();
+		mDbPassword = "a43224104";
 		
-		try 
-		{  
+		try {  
 			System.out.print("Connecting to Oracle DB... ");
 
 			mDbConnection = DriverManager.getConnection(CS_DATABASE_URL, mDbUserId, mDbPassword);
 
 			System.out.println("connected.");
 
-		} 
-		catch( SQLException e ) 
-		{
+		} catch( SQLException e ) {
 			System.out.println("Connection failed\n" + e);
 			System.exit(-1);
 		}
 	}
 	
-	private boolean isDatabaseValid(){
-		// TODO this probably needs to change somewhat
+	private boolean isDatabaseValid() throws SQLException{
+		System.out.print("Checking tables... ");
+
+		Statement stmt = mDbConnection.createStatement();
+
+		List<String> tables = DatabaseSchema.getTableNames();
+		ResultSet rs;
+
+		for (String table : tables){
+			rs = stmt.executeQuery("SELECT table_name FROM user_tables WHERE UPPER(table_name) = '"
+					+table.toUpperCase() + "'");
+			if(!rs.next()){
+				System.out.println("\nDatabase invalid: " + table.toUpperCase() + " table not found.");
+				stmt.close();
+				return false;
+			}
+		}
+
+		System.out.println("done.");
+		stmt.close();
+		return true;
+	}
+
+	/**
+	 * Builds or rebuilds the database. If any tables exist with the same names,
+	 * they will be overwritten, and data will be lost.
+	 * @param con
+	 * @return
+	 */
+	private boolean createTables()
+	{
+		System.out.println("Clearning database...");
 		try
 		{
-			System.out.print("Checking tables... ");
-
+			// Drop all relavent tables
 			Statement stmt = mDbConnection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT table_name FROM user_tables");
+			ResultSet rs;
 			
-			boolean tablesCreated = false;
-			while(rs.next())
-			{
-				if (rs.getString(1).toLowerCase().contentEquals("games")){
-					tablesCreated = true;
-					System.out.println("found.");
+			List<String> tables = DatabaseSchema.getTableNames();
+			for (String table : tables){
+				rs = stmt.executeQuery("SELECT table_name FROM user_tables WHERE UPPER(table_name) = '"
+						+table.toUpperCase() + "'");
+				System.out.println(table.toUpperCase());
+				if(rs.next()){
+					System.out.println("Dropping " + table.toUpperCase() + " table");
+					stmt.execute("DROP TABLE "+table);
 				}
 			}
 			
-			return tablesCreated;
-			
-		}
-		catch (SQLException e)
-		{
-			System.out.println(e);
-			return false;
-		}
-	}
-
-	private boolean createTables(Connection con)
-	{
-		System.out.println("Creating tables");
-		try
-		{
-			Statement stmt = con.createStatement();
-			stmt.execute("CREATE TABLE branch ("
-					+"bid INTEGER PRIMARY KEY,"
-					+"branch_name CHAR(20))" );
 			stmt.close();
+			stmt = mDbConnection.createStatement();
+			
+			System.out.println("Building database...");
+			
+			List<String> createStatements = DatabaseSchema.getCreateTableStatements();
+			for (String statement : createStatements){
+				System.out.println(statement);
+				stmt.executeUpdate(statement);
+			}
+			
+			stmt.close();
+			System.out.println("done.");
 		} catch (SQLException e) {
-			System.out.println(e);
+			System.out.println("FAILED WITH ERROR: " + e);
 			return false;
 		}
 		return true;
