@@ -64,12 +64,34 @@ public class DatabaseManager {
 	 */
 	private void startConnection(){
 		Scanner scanner = new Scanner( System.in );
-		System.out.println("Enter oracle sql username: ");
-		//mDbUserId = scanner.next();
-		mDbUserId = "ora_x6a8";
-		System.out.println("Enter oracle sql password: ");
-		//mDbPassword = scanner.next();
-		mDbPassword = "a43224104";
+		System.out.println("Enter the corresponsing number for your database:\n"+
+				"1 : Joey\n"+
+				"2 : Lizann\n"+
+				"3 : Sudi\n"+
+				"4 : Trevor");
+		String option = scanner.next();
+		scanner.close();
+		
+		if(option.contentEquals("1")){
+			// Joey's db
+			mDbUserId = "ora_a9b8";
+			mDbPassword = "a50998103";
+		} else if(option.contentEquals("2")){
+			// Lizann's db
+			mDbUserId = "ora_i8r7";
+			mDbPassword = "a51655108";
+		} else if(option.contentEquals("3")){
+			// Sudi's db
+			mDbUserId = "ora_e4k8";
+			mDbPassword = "a55211122";
+		} else if(option.contentEquals("4")){
+			// Trevor's db
+			mDbUserId = "ora_x6a8";
+			mDbPassword = "a43224104";
+		} else {
+			System.out.println("Invalid option");
+			System.exit(0);
+		}
 		
 		try {  
 			System.out.print("Connecting to Oracle DB... ");
@@ -110,15 +132,15 @@ public class DatabaseManager {
 	/**
 	 * Builds or rebuilds the database. If any tables exist with the same names,
 	 * they will be overwritten, and data will be lost.
-	 * @param con
-	 * @return
+	 * 
+	 * @return if succeeded in creating all tables
 	 */
 	private boolean createTables()
 	{
 		try
 		{
 			System.out.println("Cleaning database...");
-			// Drop all relavent tables
+			// Drop all relevant tables
 			Statement stmt = mDbConnection.createStatement();
 			ResultSet rs;
 			
@@ -133,6 +155,7 @@ public class DatabaseManager {
 				}
 			}
 			
+			// Create all tables
 			System.out.println("Building database...");
 			
 			List<String> createStatements = DatabaseSchema.getCreateTableStatements();
