@@ -57,6 +57,10 @@ public class User {
 		mPasswordHash = passwordHash;
 	}
 	
+	public void setPassword(String pass) {
+		mPasswordHash = User.getHash(pass, mPasswordSalt);
+	}
+	
 	public void setPasswordSalt(byte[] passwordSalt) {
 		mPasswordSalt = passwordSalt;
 	}
