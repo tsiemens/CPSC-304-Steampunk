@@ -1,18 +1,19 @@
 package org.steampunk.mist.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
+
 import java.awt.BorderLayout;
 
 import javax.swing.Icon;
+import javax.swing.JDialog;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import org.steampunk.mist.AccountManager;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -46,16 +47,23 @@ public class Mist extends JFrame{
 		menuBar.add(mnMist);
 		
 		JMenuItem mntmLogout = new JMenuItem("Logout");
+		mntmLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				AccountManager.getInstance().setCurrentUser(null);
+				//TODO clear info from window
+				showLoginDialog();
+			}
+		});
 		mnMist.add(mntmLogout);
 		
-		JMenuItem mntmExit_1 = new JMenuItem("Exit");
-		mntmExit_1.addActionListener(new ActionListener() {
+		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("Exiting...");
 				System.exit(0);
 			}
 		});
-		mnMist.add(mntmExit_1);
+		mnMist.add(mntmExit);
 		
 	}
 
@@ -64,6 +72,13 @@ public class Mist extends JFrame{
 	 */
 	public void addTab(String title, Icon icon, JPanel panel, String tip){
 		tabbedPane.addTab(title, icon, panel, tip);
+	}
+	
+	public void showLoginDialog() {
+		LoginDialog dialog = new LoginDialog();
+		dialog.setModal(true);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setVisible(true);
 	}
 }
 
