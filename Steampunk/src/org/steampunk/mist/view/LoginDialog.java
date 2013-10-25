@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
-
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -19,10 +18,12 @@ import javax.swing.JPasswordField;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Calendar;
 
 import javax.swing.SwingConstants;
 
 import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
 import org.steampunk.mist.repository.UserRepository.UserNotFoundException;
@@ -158,7 +159,7 @@ public class LoginDialog extends JDialog {
 						if (!isSignInMode)
 							setSignInMode(true);
 						else {
-							// TODO create new account
+							createAccount();
 						}
 					}
 				});
@@ -206,6 +207,38 @@ public class LoginDialog extends JDialog {
 			JOptionPane.showMessageDialog(this, "Username or password incorrect!");
 		} catch (RepositoryErrorException e) {
 			JOptionPane.showMessageDialog(this, "Unknown Database Error Occurred!");
+		}
+	}
+	
+	private void createAccount() {
+		String username = usernameField.getText();
+		String password = new String(passwordField.getPassword());
+		String confString = new String(confPasswordField.getPassword());
+		String email = emailField.getText();
+		
+		try {
+			if (username.isEmpty() || password.isEmpty() || confString.isEmpty() || email.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "All fields must be filled.");
+				return;
+			} else if (password.length() > 30) {
+				JOptionPane.showMessageDialog(this, "Password can be maximum 30 characters.");
+				return;
+			} 
+			else if (!password.contentEquals(confString)) {
+				JOptionPane.showMessageDialog(this, "Password confirmation does not match.");
+				return;
+			} else if (UserRepository.userExists(username)) {
+				JOptionPane.showMessageDialog(this, "User already exists!");
+				return;
+			} else {
+				byte[] salt = User.generateSalt();
+				User newUser = new User(username, User.getHash(password, salt), salt,
+						email, Calendar.getInstance());
+				UserRepository.addUser(newUser);
+				login();
+			}
+		} catch (RepositoryErrorException e) {
+			JOptionPane.showMessageDialog(this, "Unknown error occured while communicating with the server.");
 		}
 	}
 }
