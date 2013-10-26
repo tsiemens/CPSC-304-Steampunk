@@ -62,6 +62,34 @@ public class UserRepository {
 	}
 	
 	/**
+	 * Checks if the user exists already
+	 * @param username. this cannot be null
+	 * @return true if user exists, false otherwise
+	 * @throws RepositoryErrorException
+	 */
+	public static boolean userExists(String username) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT username"
+				+" FROM "+DatabaseSchema.TABLE_NAME_USERS
+				+" WHERE username = ?", username);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if (rs.next()){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading user data: "+e);
+		}
+	}
+	
+	/**
 	 * Modifies user to match the data contained in the database, for username
 	 * @param username
 	 * @param user
