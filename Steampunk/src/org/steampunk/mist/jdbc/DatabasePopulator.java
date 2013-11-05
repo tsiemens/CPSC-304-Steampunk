@@ -2,7 +2,11 @@ package org.steampunk.mist.jdbc;
 
 import java.util.Calendar;
 
+import org.steampunk.mist.model.Admin;
+import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
 
@@ -14,10 +18,10 @@ public class DatabasePopulator {
 	 */
 	public static boolean addRequiredEntities(){
 		byte[] salt = User.generateSalt();
-		byte[] passhash = User.getHash("worstpassever", salt);
-		User user = new User("root", passhash, salt, "root@root", Calendar.getInstance());
+		byte[] passhash = User.getHash("root", salt);
+		Admin admin = new Admin(Admin.ADMIN_TIER_ROOT, "root", passhash, salt, "root@root", Calendar.getInstance());
 		try {
-			UserRepository.addUser(user);
+			AdminRepository.addAdmin(admin);
 			return true;
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add required entities "+e);
@@ -32,9 +36,9 @@ public class DatabasePopulator {
 		System.out.print("Populating database with demo entities and relationships... ");
 		byte[] salt = User.generateSalt();
 		byte[] passhash = User.getHash("lksjdfkljdsfkl", salt);
-		User user = new User("testuser", passhash, salt, "testemail@pleaseignore.com", Calendar.getInstance());
+		Player player = new Player("testuser", passhash, salt, "testemail@pleaseignore.com", Calendar.getInstance());
 		try {
-			UserRepository.addUser(user);
+			PlayerRepository.addPlayer(player);
 		} catch (RepositoryErrorException e) {
 			System.err.println("\nFailed to add demo entities "+e);
 		}

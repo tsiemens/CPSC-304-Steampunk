@@ -130,7 +130,7 @@ public class UserRepository {
 		}
 	}
 	
-	public static void addUser(User user) throws RepositoryErrorException{
+	protected static void addUser(User user) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
 			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_USERS +"(username, password, passSalt, email, dateJoined)"

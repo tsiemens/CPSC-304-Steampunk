@@ -23,7 +23,10 @@ import java.util.Calendar;
 import javax.swing.SwingConstants;
 
 import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
 import org.steampunk.mist.repository.UserRepository.UserNotFoundException;
@@ -45,6 +48,7 @@ public class LoginDialog extends JDialog {
 	private JButton loginButton;
 	
 	boolean isSignInMode;
+	OnLoginListener mLoginListener;
 
 	/**
 	 * Create the dialog.
@@ -159,7 +163,7 @@ public class LoginDialog extends JDialog {
 						if (!isSignInMode)
 							setSignInMode(true);
 						else {
-							createAccount();
+							createPlayerAccount();
 						}
 					}
 				});
@@ -198,7 +202,19 @@ public class LoginDialog extends JDialog {
 		
 		try {
 			if (UserRepository.authorizeUser(username, password)) {
-				AccountManager.getInstance().setCurrentUser(UserRepository.getUser(username));
+				User user;
+				if (PlayerRepository.playerExists(username)) {
+					user = PlayerRepository.getPlayer(username);
+				} else if (AdminRepository.adminExists(username)) {
+					user = AdminRepository.getAdmin(username);
+				} else {
+					throw new RepositoryErrorException("User was not an admin or player");
+				}
+				
+				AccountManager.getInstance().setCurrentUser(user);
+				if (mLoginListener != null) {
+					mLoginListener.onLogin();
+				}
 				this.dispose();
 			} else {
 				JOptionPane.showMessageDialog(this, "Username or password incorrect!");
@@ -206,11 +222,12 @@ public class LoginDialog extends JDialog {
 		} catch (UserNotFoundException e) {
 			JOptionPane.showMessageDialog(this, "Username or password incorrect!");
 		} catch (RepositoryErrorException e) {
+			System.out.println(e);
 			JOptionPane.showMessageDialog(this, "Unknown Database Error Occurred!");
 		}
 	}
 	
-	private void createAccount() {
+	private void createPlayerAccount() {
 		String username = usernameField.getText();
 		String password = new String(passwordField.getPassword());
 		String confString = new String(confPasswordField.getPassword());
@@ -232,13 +249,24 @@ public class LoginDialog extends JDialog {
 				return;
 			} else {
 				byte[] salt = User.generateSalt();
-				User newUser = new User(username, User.getHash(password, salt), salt,
+				Player newPlayer = new Player(username, User.getHash(password, salt), salt,
 						email, Calendar.getInstance());
-				UserRepository.addUser(newUser);
+				PlayerRepository.addPlayer(newPlayer);
 				login();
 			}
 		} catch (RepositoryErrorException e) {
 			JOptionPane.showMessageDialog(this, "Unknown error occured while communicating with the server.");
 		}
+	}
+	
+	public void setOnLoginListener(OnLoginListener listener)
+	{
+		mLoginListener = listener;
+	}
+	
+	public static interface OnLoginListener
+	{
+		
+		public void onLogin();
 	}
 }

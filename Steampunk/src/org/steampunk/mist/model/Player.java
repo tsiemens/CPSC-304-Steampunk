@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 public class Player extends User{
 
+	// Further player specific attributes may be desired later
+	
 	// constructors
 	public Player() {
 		super();

@@ -19,12 +19,7 @@ public class MistMain {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 					window = new Mist();
-					
-					LoginDialog dialog = new LoginDialog();
-					dialog.setModal(true);
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setVisible(true);
-					//...
+					window.showLoginDialog();
 			}
 		});
 	}
