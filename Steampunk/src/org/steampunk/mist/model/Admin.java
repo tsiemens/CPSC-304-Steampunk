@@ -21,6 +21,15 @@ public class Admin extends User {
 		mPermissionTier = permissionTier;
 	}
 	
+	/**
+	 * Creates copy of admin
+	 * @param admin
+	 */
+	public Admin(Admin admin) {
+		super(admin);
+		mPermissionTier = admin.getPermissionTier();
+	}
+	
 	// accessors
 	public int getPermissionTier() {
 		return mPermissionTier;

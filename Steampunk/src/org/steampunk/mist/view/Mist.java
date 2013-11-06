@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 
 public class Mist extends JFrame{
 
+	private static final long serialVersionUID = 234794033610547082L;
+	
 	private JTabbedPane tabbedPane;
 
 	/**

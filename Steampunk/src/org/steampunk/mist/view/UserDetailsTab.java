@@ -1,19 +1,19 @@
 package org.steampunk.mist.view;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.RepositoryErrorException;
+import org.steampunk.mist.repository.UserRepository;
 
 import java.awt.Font;
-
-import javax.swing.BoxLayout;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +24,8 @@ import javax.swing.JButton;
 
 public class UserDetailsTab extends JPanel {
 
+	private static final long serialVersionUID = 8436157125343804361L;
+	
 	JLabel mUsernameLabel;
 	JLabel mEmailLabel;
 	JLabel mJoinedLabel;
@@ -65,7 +67,7 @@ public class UserDetailsTab extends JPanel {
 		gbc_mEmailLabel.gridy = 0;
 		panel.add(mEmailLabel, gbc_mEmailLabel);
 		
-		mChangeEmailButton = new JButton("Change");
+		mChangeEmailButton = new JButton("Change Email");
 		GridBagConstraints gbc_mChangeEmailButton = new GridBagConstraints();
 		gbc_mChangeEmailButton.insets = new Insets(0, 0, 5, 0);
 		gbc_mChangeEmailButton.gridx = 3;
@@ -121,14 +123,59 @@ public class UserDetailsTab extends JPanel {
 	
 	private void showChangeEmailDialog()
 	{
-		System.out.println("TODO: implement change email");
-		// TODO
+		User cUser = AccountManager.getInstance().getCurrentUser();
+		String email = (String)JOptionPane.showInputDialog(this, "Enter new Email", "Email", 
+				JOptionPane.PLAIN_MESSAGE, null, null, cUser.getEmail());
+		
+		if (email == null || email.contentEquals(cUser.getEmail())) {
+			return;
+		} else if (!email.matches(".+@.+")) {
+			JOptionPane.showMessageDialog(this, "Must be valid email address.");
+		} else if (email.length() > 50) {
+			JOptionPane.showMessageDialog(this, "Email can be maximum 50 characters.");
+		} else {
+			try {
+				UserRepository.updateEmail(cUser.getUsername(), email);
+				// Ensure that email is not changed unless db update is successful
+				cUser.setEmail(email);
+				mEmailLabel.setText(email);
+			} catch (RepositoryErrorException e) {
+				System.err.println(e);
+				JOptionPane.showMessageDialog(this, "Unknown database error occured.");
+			}
+		}
 	}
 	
 	private void showChangePassDialog()
 	{
-		System.out.println("TODO: implement change password");
-		// TODO
+		User cUser = AccountManager.getInstance().getCurrentUser();
+		String password = CustomOptionPane.showPasswordDialog(this, "Enter new password", "Password", null);
+		
+		if (password == null) {
+			return;
+		} else if (password.length() == 0) {
+			JOptionPane.showMessageDialog(this, "Password must be at least one character.");
+			return;
+		} else if (password.length() > 30) {
+			JOptionPane.showMessageDialog(this, "Password can be maximum 30 characters.");
+			return;
+		} 
+		
+		String conf = CustomOptionPane.showPasswordDialog(this, "Confirm new password", "Password", null);
+		if (!password.contentEquals(conf)) {
+			JOptionPane.showMessageDialog(this, "Password does not match");
+		} else {
+			try {
+				byte[] hash = User.getHash(password, cUser.getPasswordSalt());
+				UserRepository.updatePassword(cUser.getUsername(), hash);
+				// Ensure that hash is not changed unless db update is successful
+				cUser.setPasswordHash(hash);
+				JOptionPane.showMessageDialog(this, "Password change successful.");
+			} catch (RepositoryErrorException e) {
+				System.err.println(e);
+				JOptionPane.showMessageDialog(this, "Unknown database error occured.");
+			}
+		}
 	}
 
 }

@@ -15,6 +15,14 @@ public class Player extends User{
 		super(username, passwordHash, salt, email, dateJoined);
 	}
 	
+	/**
+	 * Creates copy of player
+	 * @param player
+	 */
+	public Player(Player player) {
+		super(player);
+	}
+	
 	// all accessors/mutators inherhited from parent User class
 	
 }

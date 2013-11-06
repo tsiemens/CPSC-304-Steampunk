@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
 import org.steampunk.mist.model.Player;
-import org.steampunk.mist.repository.UserRepository.UserNotFoundException;
 
 public class PlayerRepository extends UserRepository{
 

@@ -33,6 +33,8 @@ import org.steampunk.mist.repository.UserRepository.UserNotFoundException;
 
 public class LoginDialog extends JDialog {
 
+	private static final long serialVersionUID = 850240242698660511L;
+	
 	private final JPanel contentPanel = new JPanel();
 	private JPanel newUserPanel;
 	private JTextField usernameField;
@@ -240,7 +242,13 @@ public class LoginDialog extends JDialog {
 			} else if (password.length() > 30) {
 				JOptionPane.showMessageDialog(this, "Password can be maximum 30 characters.");
 				return;
-			} 
+			} else if (username.length() > 20) {
+				JOptionPane.showMessageDialog(this, "Username can be maximum 20 characters.");
+				return;
+			} else if (email.length() > 50) {
+				JOptionPane.showMessageDialog(this, "Email can be maximum 50 characters.");
+				return;
+			}
 			else if (!password.contentEquals(confString)) {
 				JOptionPane.showMessageDialog(this, "Password confirmation does not match.");
 				return;

@@ -8,7 +8,6 @@ import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.AdminRepository;
 import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
-import org.steampunk.mist.repository.UserRepository;
 
 public class DatabasePopulator {
 
