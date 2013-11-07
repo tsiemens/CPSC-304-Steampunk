@@ -39,7 +39,7 @@ public class UserDetailsTab extends JPanel {
 		setLayout(new BorderLayout(0, 0));
 		
 		mUsernameLabel = new JLabel("<Username>");
-		mUsernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		mUsernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		mUsernameLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
 		add(mUsernameLabel, BorderLayout.NORTH);
 		

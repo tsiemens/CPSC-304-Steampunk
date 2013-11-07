@@ -34,8 +34,8 @@ public class DatabasePopulator {
 	public static void demoPopulate() {
 		System.out.print("Populating database with demo entities and relationships... ");
 		byte[] salt = User.generateSalt();
-		byte[] passhash = User.getHash("lksjdfkljdsfkl", salt);
-		Player player = new Player("testuser", passhash, salt, "testemail@pleaseignore.com", Calendar.getInstance());
+		byte[] passhash = User.getHash("123", salt);
+		Player player = new Player("SWAG", passhash, salt, "xSWAGYOLO420x@pleaseignore.com", Calendar.getInstance());
 		try {
 			PlayerRepository.addPlayer(player);
 		} catch (RepositoryErrorException e) {
