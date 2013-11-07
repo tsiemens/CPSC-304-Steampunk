@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 
 public class Mist extends JFrame{
 
+	private static final long serialVersionUID = 234794033610547082L;
+	
 	private JTabbedPane tabbedPane;
 
 	/**
@@ -50,7 +52,8 @@ public class Mist extends JFrame{
 		mntmLogout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				AccountManager.getInstance().setCurrentUser(null);
-				//TODO clear info from window
+				
+				tabbedPane.removeAll();			
 				showLoginDialog();
 			}
 		});
@@ -78,7 +81,19 @@ public class Mist extends JFrame{
 		LoginDialog dialog = new LoginDialog();
 		dialog.setModal(true);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setOnLoginListener(new LoginDialog.OnLoginListener() {
+			
+			@Override
+			public void onLogin() {
+				setupTabs();
+			}
+		});
 		dialog.setVisible(true);
+	}
+	
+	private void setupTabs() {
+		addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
+				new UserDetailsTab(), null);
 	}
 }
 

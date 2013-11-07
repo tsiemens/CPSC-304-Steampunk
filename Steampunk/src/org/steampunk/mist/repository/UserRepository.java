@@ -10,6 +10,12 @@ import org.steampunk.mist.model.User;
 
 public class UserRepository {
 	
+	public static final String FIELD_USERNAME = "username";
+	public static final String FIELD_PASSHASH = "password";
+	public static final String FIELD_PASSSALT = "passSalt";
+	public static final String FIELD_EMAIL = "email";
+	public static final String FIELD_DATE_JOINED = "dateJoined";
+	
 	/**
 	 * Checks the authenticity of the user
 	 * @param username
@@ -71,7 +77,7 @@ public class UserRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT username"
+			rs = dbm.queryPrepared("SELECT "+FIELD_USERNAME
 				+" FROM "+DatabaseSchema.TABLE_NAME_USERS
 				+" WHERE username = ?", username);
 		} catch (SQLException e) {
@@ -115,12 +121,12 @@ public class UserRepository {
 		
 		try{
 			if (rs.next()){
-				user.setUsername(rs.getString("username"));
-				user.setPasswordHash(rs.getBytes("password"));
-				user.setPasswordSalt(rs.getBytes("passSalt"));
-				user.setEmail(rs.getString("email"));
+				user.setUsername(rs.getString(FIELD_USERNAME));
+				user.setPasswordHash(rs.getBytes(FIELD_PASSHASH));
+				user.setPasswordSalt(rs.getBytes(FIELD_PASSSALT));
+				user.setEmail(rs.getString(FIELD_EMAIL));
 				Calendar cal = Calendar.getInstance();
-				cal.setTimeInMillis(rs.getDate("dateJoined").getTime());
+				cal.setTimeInMillis(rs.getDate(FIELD_DATE_JOINED).getTime());
 				user.setDateJoined(cal);
 			} else {
 				throw new UserNotFoundException("User does not exist");
@@ -130,7 +136,32 @@ public class UserRepository {
 		}
 	}
 	
-	public static void addUser(User user) throws RepositoryErrorException{
+	public static void updateEmail(String username, String newEmail) throws RepositoryErrorException
+	{
+		updateField(username, FIELD_EMAIL, newEmail);
+	}
+	
+	public static void updatePassword(String username, byte[] passHash) throws RepositoryErrorException
+	{
+		updateField(username, FIELD_PASSHASH, passHash);
+	}
+	
+	private static void updateField(String username, String field, Object newVal) throws RepositoryErrorException
+	{
+		if (username == null)
+			throw new NullPointerException("Username cannot be null");
+		
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("UPDATE "+DatabaseSchema.TABLE_NAME_USERS
+				+" SET "+field+" = ?"
+				+" WHERE username = ?", newVal, username);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+	}
+	
+	protected static void addUser(User user) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
 			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_USERS +"(username, password, passSalt, email, dateJoined)"

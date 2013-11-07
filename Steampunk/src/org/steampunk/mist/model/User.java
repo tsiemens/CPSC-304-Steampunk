@@ -29,6 +29,18 @@ public class User {
 		mDateJoined = dateJoined;
 	}
 	
+	/**
+	 * Creates a copy of user
+	 * @param user
+	 */
+	public User(User user) {
+		mUsername = user.getUsername();
+		mPasswordHash = user.getPasswordHash();
+		mPasswordSalt = user.getPasswordSalt();
+		mEmail = user.getEmail();
+		mDateJoined = user.getDateJoined();
+	}
+	
 	public String getUsername(){
 		return mUsername;
 	}
