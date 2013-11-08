@@ -11,27 +11,17 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.repository.GameRepository;
+import org.steampunk.mist.repository.GameRepository.GameNameIdPair;
+import org.steampunk.mist.repository.RepositoryErrorException;
+
 public class GameLibraryTab extends JPanel implements ListSelectionListener {
 
 	private static final long serialVersionUID = 5169865659990546731L;
 	
-	Vector<GameListItem> mGames;
-	JList<GameListItem> mGameList;
-	
-	private class GameListItem {
-		public String title;
-		public int id;
-		
-		public GameListItem(int id, String title) {
-			this.title = title;
-			this.id = id;
-		}
-		
-		@Override
-		public String toString() {
-			return title;
-		}
-	}
+	Vector<GameNameIdPair> mGames;
+	JList<GameNameIdPair> mGameList;
 	
 	/**
 	 * Create the panel.
@@ -39,7 +29,7 @@ public class GameLibraryTab extends JPanel implements ListSelectionListener {
 	public GameLibraryTab() {
 		setLayout(new BorderLayout(0, 0));
 		
-		mGameList = new JList<GameListItem>();
+		mGameList = new JList<GameNameIdPair>();
 		mGameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mGameList.addListSelectionListener(this);
 		JScrollPane scrollPane = new JScrollPane(mGameList);
@@ -48,13 +38,16 @@ public class GameLibraryTab extends JPanel implements ListSelectionListener {
 		JPanel panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
 
-		mGames = new Vector<GameListItem>();
-		mGameList.setListData(mGames);
-		mGames.add(new GameListItem(0, "HL3"));
-		mGames.add(new GameListItem(1, "HL4"));
-		mGames.add(new GameListItem(2, "Battlefield"));
-		mGames.add(new GameListItem(3, "Warframe"));
-		mGames.add(new GameListItem(4, "Killzone"));
+		refreshGameList();
+	}
+	
+	public void refreshGameList() {
+		try {
+			mGames = GameRepository.getGameNamesOwnedByUser(AccountManager.getInstance().getCurrentUser().getUsername());
+			mGameList.setListData(mGames);
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to get user games "+e);
+		}
 	}
 	
 	@Override
