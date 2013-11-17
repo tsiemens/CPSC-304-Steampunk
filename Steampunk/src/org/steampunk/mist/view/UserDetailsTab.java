@@ -8,9 +8,9 @@ import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
+import org.steampunk.mist.util.MistTextFormatter;
 
 import java.awt.Font;
-
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -118,7 +118,7 @@ public class UserDetailsTab extends JPanel {
 		mUsernameLabel.setText(currentUser.getUsername());
 		mEmailLabel.setText(currentUser.getEmail());
 		Calendar dj = currentUser.getDateJoined();
-		mJoinedLabel.setText(""+(dj.get(Calendar.MONTH)+1)+"/"+dj.get(Calendar.DAY_OF_MONTH)+"/"+dj.get(Calendar.YEAR));
+		mJoinedLabel.setText(MistTextFormatter.formatDateString(dj));
 	}
 	
 	private void showChangeEmailDialog()

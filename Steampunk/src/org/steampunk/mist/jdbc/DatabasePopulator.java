@@ -55,7 +55,7 @@ public class DatabasePopulator {
 			GameRepository.addGame(demoGame);
 			demoGame = new Game(64, "Super Key Adventures", "DBM Industries", "CS", "1000101010101");
 			GameRepository.addGame(demoGame);
-			demoGame = new Game(1, "Ummmm... 4?", "Blarg", "U", "I ran out of ideas.");
+			demoGame = new Game(1, "Ummmm... 4?", "Blarg", "U", "I ran out of ideas, but this description is going to be really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really, really long");
 			GameRepository.addGame(demoGame);
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo games "+e);
