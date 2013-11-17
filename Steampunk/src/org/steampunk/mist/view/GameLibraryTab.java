@@ -68,7 +68,7 @@ public class GameLibraryTab extends JPanel implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
 		
-		if (e.getValueIsAdjusting()){
+		if (!e.getValueIsAdjusting()){
 			System.out.println("Selected index: "+mGameList.getSelectedIndex());
 			int gameid = mGames.get(mGameList.getSelectedIndex()).id;
 			try {
