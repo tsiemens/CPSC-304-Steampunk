@@ -17,11 +17,17 @@ import javax.swing.SwingConstants;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
+import org.steampunk.mist.repository.UserRepository.UserNotFoundException;
+
 import java.awt.FlowLayout;
+
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class FriendsTab extends JPanel {
 	
@@ -30,8 +36,8 @@ public class FriendsTab extends JPanel {
 	JLabel mFriendsLabel;
 	JLabel mEmailLabel;
 	JLabel mJoinedLabel;
-	private JButton mChangeEmailButton;
-	private JButton mChangePassButton;
+
+	private JTextField txtPlayersName;
 	
 	
 	
@@ -47,35 +53,54 @@ public class FriendsTab extends JPanel {
 		add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{50, 50, 30, 30, 50, 50};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
+		gbl_panel.rowHeights = new int[]{50, 50, 30, 30, 50, 50, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 0.0};
+		gbl_panel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0};
 		panel.setLayout(gbl_panel);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridheight = 6;
-		gbc_scrollPane.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 1;
 		gbc_scrollPane.gridy = 0;
 		panel.add(scrollPane, gbc_scrollPane);
 		
-		JButton btnNewButton = new JButton("Add Friend");
-		btnNewButton.addActionListener(new ActionListener() {
+		JList mFriendsList = new JList();
+		scrollPane.setViewportView(mFriendsList);
+		
+
+		
+		txtPlayersName = new JTextField();
+		txtPlayersName.setText("Player's name");
+		txtPlayersName.setToolTipText("Type a player's name");
+		GridBagConstraints gbc_txtPlayersName = new GridBagConstraints();
+		gbc_txtPlayersName.gridwidth = 3;
+		gbc_txtPlayersName.insets = new Insets(0, 0, 5, 5);
+		gbc_txtPlayersName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtPlayersName.gridx = 2;
+		gbc_txtPlayersName.gridy = 1;
+		panel.add(txtPlayersName, gbc_txtPlayersName);
+		txtPlayersName.setColumns(10);
+		
+		JButton btnAddFriend = new JButton("Add Friend");
+		btnAddFriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				addFriend();
 			}
-		});
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNewButton.gridx = 3;
-		gbc_btnNewButton.gridy = 2;
-		panel.add(btnNewButton, gbc_btnNewButton);
+		});	
+		
+		GridBagConstraints gbc_btnAddFriend = new GridBagConstraints();
+		gbc_btnAddFriend.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAddFriend.gridx = 3;
+		gbc_btnAddFriend.gridy = 2;
+		panel.add(btnAddFriend, gbc_btnAddFriend);
 		
 		JButton btnDeleteFriend = new JButton("Delete Friend");
 		btnDeleteFriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//...
+				removeFriend();
 			}
 		});
 		GridBagConstraints gbc_btnDeleteFriend = new GridBagConstraints();
@@ -84,10 +109,64 @@ public class FriendsTab extends JPanel {
 		gbc_btnDeleteFriend.gridy = 3;
 		panel.add(btnDeleteFriend, gbc_btnDeleteFriend);
 		
-		
-		String d = "Denise";
 	}
 	
+	private void addFriend(){		
+		
+		String invitee = txtPlayersName.getText();	
+		String inviter = AccountManager.getInstance().getCurrentUser().getUsername();
+		// check if the invitee exist
+		try {
+			
+			if (UserRepository.userExists(invitee)) {				
+				// check if the invitee is the same as inviter
+				if (inviter != invitee){
+					// check if invitee is already a friend
+					if(PlayerRepository.isFriend(inviter, invitee)){
+						// add tuple into areFriends
+						PlayerRepository.addFriend(inviter, invitee);
+					}
+				} else {
+					JOptionPane.showMessageDialog(this, "You can't add yourself to friends list!");					
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "No such player!");
+			}
 
+		} catch (RepositoryErrorException e) {
+			System.out.println(e);
+			JOptionPane.showMessageDialog(this, "Unknown Database Error Occurred!");
+		}
+		
+	}
+	
+	private void removeFriend(){		
+		// **** not mofified yet ****
+		String invitee = txtPlayersName.getText();	
+		String inviter = AccountManager.getInstance().getCurrentUser().getUsername();
+		// check if the invitee exist
+		try {
+			
+			if (UserRepository.userExists(invitee)) {				
+				// check if the invitee is the same as inviter
+				if (inviter != invitee){
+					// check if invitee is already a friend
+					if(PlayerRepository.isFriend(inviter, invitee)){
+						// add tuple into areFriends
+						PlayerRepository.addFriend(inviter, invitee);
+					}
+				} else {
+					JOptionPane.showMessageDialog(this, "You can't add yourself to friends list!");					
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "No such player!");
+			}
+
+		} catch (RepositoryErrorException e) {
+			System.out.println(e);
+			JOptionPane.showMessageDialog(this, "Unknown Database Error Occurred!");
+		}
+		
+	}
 
 }
