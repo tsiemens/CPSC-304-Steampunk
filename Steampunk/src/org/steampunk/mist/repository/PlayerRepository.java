@@ -80,4 +80,42 @@ public class PlayerRepository extends UserRepository{
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
+	
+	
+	public static boolean isFriend(String inviter, String invitee) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT inviterUsername, inviteeUsername"
+				+" FROM "+DatabaseSchema.TABLE_NAME_ARE_FRIENDS
+				+" WHERE inviterUsername = ?"
+				+ " AND inviteeUsername = ?", inviter, invitee);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if (rs.next()){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading player data: "+e);
+		}
+
+	}
+	
+	public static void addFriend(String inviter, String invitee) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_ARE_FRIENDS
+					+"(inviterUsername, inviteeUsername)"
+					+" VALUES(?, ?)", inviter, invitee);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+		
+	}
+	
 }
