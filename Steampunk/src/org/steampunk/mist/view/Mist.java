@@ -99,6 +99,7 @@ public class Mist extends JFrame{
 			addTab("Game Library", null, new GameLibraryTab(), null);
 			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 				new UserDetailsTab(), null);
+			addTab("Friends", null, new FriendsTab(), null);
 			tabbedPane.setSelectedIndex(1);
 		} else {
 			// Admin tabs
