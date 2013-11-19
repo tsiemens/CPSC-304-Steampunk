@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -33,11 +34,11 @@ public class FriendsTab extends JPanel {
 	
 	private static final long serialVersionUID = 8436157125343804361L;
 	
+	Vector<String> mFriends;
 	JLabel mFriendsLabel;
-	JLabel mEmailLabel;
-	JLabel mJoinedLabel;
-
-	private JTextField txtPlayersName;
+	String inviter = AccountManager.getInstance().getCurrentUser().getUsername();
+	JList<String> mFriendsList;
+	private JTextField txtPlayerName;
 	
 	
 	
@@ -52,9 +53,9 @@ public class FriendsTab extends JPanel {
 		JPanel panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0};
+		gbl_panel.columnWidths = new int[]{0, 0, 5, 40, 0};
 		gbl_panel.rowHeights = new int[]{50, 50, 30, 30, 50, 50, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 0.0};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0};
 		gbl_panel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0};
 		panel.setLayout(gbl_panel);
 		
@@ -67,27 +68,29 @@ public class FriendsTab extends JPanel {
 		gbc_scrollPane.gridy = 0;
 		panel.add(scrollPane, gbc_scrollPane);
 		
-		JList mFriendsList = new JList();
+		mFriendsList = new JList<String>();
 		scrollPane.setViewportView(mFriendsList);
+		refreshFriendsList();
 		
 
 		
-		txtPlayersName = new JTextField();
-		txtPlayersName.setText("Player's name");
-		txtPlayersName.setToolTipText("Type a player's name");
+		txtPlayerName = new JTextField();
+		//txtPlayersName.setText("Player's name");
+		txtPlayerName.setToolTipText("Type a player's name");
 		GridBagConstraints gbc_txtPlayersName = new GridBagConstraints();
 		gbc_txtPlayersName.gridwidth = 3;
 		gbc_txtPlayersName.insets = new Insets(0, 0, 5, 5);
 		gbc_txtPlayersName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtPlayersName.gridx = 2;
 		gbc_txtPlayersName.gridy = 1;
-		panel.add(txtPlayersName, gbc_txtPlayersName);
-		txtPlayersName.setColumns(10);
+		panel.add(txtPlayerName, gbc_txtPlayersName);
+		txtPlayerName.setColumns(10);
 		
 		JButton btnAddFriend = new JButton("Add Friend");
 		btnAddFriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				addFriend();
+				refreshFriendsList();
 			}
 		});	
 		
@@ -101,6 +104,7 @@ public class FriendsTab extends JPanel {
 		btnDeleteFriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				removeFriend();
+				refreshFriendsList();
 			}
 		});
 		GridBagConstraints gbc_btnDeleteFriend = new GridBagConstraints();
@@ -109,25 +113,38 @@ public class FriendsTab extends JPanel {
 		gbc_btnDeleteFriend.gridy = 3;
 		panel.add(btnDeleteFriend, gbc_btnDeleteFriend);
 		
+
+
 	}
 	
+	private void refreshFriendsList() {
+		try {
+			mFriends = PlayerRepository.getFriends(inviter);
+			mFriendsList.setListData(mFriends);
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to get friend names "+e);
+		}
+	}	
+
 	private void addFriend(){		
 		
-		String invitee = txtPlayersName.getText();	
-		String inviter = AccountManager.getInstance().getCurrentUser().getUsername();
-		// check if the invitee exist
+		String invitee = txtPlayerName.getText();	
+
 		try {
-			
-			if (UserRepository.userExists(invitee)) {				
+			// check if the invitee exist
+			if (UserRepository.userExists(invitee)) {	
 				// check if the invitee is the same as inviter
-				if (inviter != invitee){
+				if (!inviter.equals(invitee)){
 					// check if invitee is already a friend
-					if(PlayerRepository.isFriend(inviter, invitee)){
+					if(!PlayerRepository.isFriend(inviter, invitee)){
 						// add tuple into areFriends
 						PlayerRepository.addFriend(inviter, invitee);
+						JOptionPane.showMessageDialog(this, invitee + " is added to friend list");
+					} else {
+						JOptionPane.showMessageDialog(this, invitee + " is already in your friend list!");
 					}
 				} else {
-					JOptionPane.showMessageDialog(this, "You can't add yourself to friends list!");					
+					JOptionPane.showMessageDialog(this, "You can't add yourself to friend list!");					
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "No such player!");
@@ -141,22 +158,24 @@ public class FriendsTab extends JPanel {
 	}
 	
 	private void removeFriend(){		
-		// **** not mofified yet ****
-		String invitee = txtPlayersName.getText();	
-		String inviter = AccountManager.getInstance().getCurrentUser().getUsername();
-		// check if the invitee exist
+
+		String invitee = txtPlayerName.getText();	
+
 		try {
-			
-			if (UserRepository.userExists(invitee)) {				
+			// check if the invitee exist
+			if (UserRepository.userExists(invitee)) {	
 				// check if the invitee is the same as inviter
-				if (inviter != invitee){
+				if (!inviter.equals(invitee)){
 					// check if invitee is already a friend
 					if(PlayerRepository.isFriend(inviter, invitee)){
 						// add tuple into areFriends
-						PlayerRepository.addFriend(inviter, invitee);
+						PlayerRepository.removeFriend(inviter, invitee);
+						JOptionPane.showMessageDialog(this, invitee + " is removed from friend list");
+					} else {
+						JOptionPane.showMessageDialog(this, invitee + " is not your friend yet!");
 					}
 				} else {
-					JOptionPane.showMessageDialog(this, "You can't add yourself to friends list!");					
+					JOptionPane.showMessageDialog(this, "You are not in your friend list!");					
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "No such player!");
@@ -166,6 +185,8 @@ public class FriendsTab extends JPanel {
 			System.out.println(e);
 			JOptionPane.showMessageDialog(this, "Unknown Database Error Occurred!");
 		}
+		
+
 		
 	}
 
