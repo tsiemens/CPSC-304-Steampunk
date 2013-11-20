@@ -105,6 +105,7 @@ public class Mist extends JFrame{
 			// Admin tabs
 			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 					new UserDetailsTab(), null);
+			addTab("Users", null, new SystemAdminUsersTab(), null);
 		}
 	}
 }

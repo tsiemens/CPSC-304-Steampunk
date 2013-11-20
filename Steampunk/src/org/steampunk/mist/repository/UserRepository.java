@@ -8,7 +8,6 @@ import java.util.Vector;
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
 import org.steampunk.mist.model.User;
-import org.steampunk.mist.repository.GameRepository.GameNameIdPair;
 
 public class UserRepository {
 	
@@ -96,39 +95,68 @@ public class UserRepository {
 			throw new RepositoryErrorException("Error reading user data: "+e);
 		}
 	}
-	
+/*	
 	/**
-	 * Returns usernames that match the search term, sorted alphabetically
+	 * Returns the usernames that match the search term, sorted alphabetically
 	 * @param username
 	 * @return
 	 * @throws RepositoryErrorException
 	 */
-	public static Vector<String> searchUsers(String searchterm) throws RepositoryErrorException {
+/*	public static Vector<String> searchUsers(String searchterm) throws RepositoryErrorException {
 		Vector<String> usernames = new Vector<String>();
-/*		
+		
 		searchterm = searchterm.replace("%", "");
 		System.out.println("Searching '"+searchterm+"'");
-		if (searchterm.isEmpty()) { return games; }
+		if (searchterm.isEmpty()) { return usernames; }
 		
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT DISTINCT "+FIELD_GAMEID+", "+FIELD_NAME
+			rs = dbm.queryPrepared("SELECT DISTINCT "+FIELD_USERNAME
 				+" FROM "+DatabaseSchema.TABLE_NAME_GAMES
-				+" WHERE UPPER("+FIELD_NAME+") LIKE UPPER('%'||?||'%')"
-				+" ORDER BY "+FIELD_NAME+" ASC", searchterm);
+				+" WHERE UPPER("+FIELD_USERNAME+") LIKE UPPER('%'||?||'%')"
+				+" ORDER BY "+FIELD_USERNAME+" ASC", searchterm);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
 		
 		try{
 			while (rs.next()){
-				games.add(new GameNameIdPair(rs.getInt(FIELD_GAMEID), rs.getString(FIELD_NAME)));
+				usernames.add(rs.getString(FIELD_USERNAME));
 			}
 		} catch (SQLException e) {
 			throw new RepositoryErrorException("Error reading game data: "+e);
 		}
-		*/
+		
+		return usernames;
+	}
+*/
+	
+	/**
+	 * Gets all users' usernames
+	 * @return list of users' usernames
+	 * @throws RepositoryErrorException
+	 */
+	public static Vector<String> getAllUsers() throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT username"
+				+" FROM "+DatabaseSchema.TABLE_NAME_USERS);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		Vector<String> usernames = new Vector<String>();
+		
+		try{
+			while (rs.next()){
+				usernames.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading user data: "+e);
+		}
+		
 		return usernames;
 	}
 	
