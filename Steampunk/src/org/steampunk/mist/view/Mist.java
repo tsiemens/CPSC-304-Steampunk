@@ -1,21 +1,20 @@
 package org.steampunk.mist.view;
 
-import javax.swing.JFrame;
-
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JDialog;
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import javax.swing.JMenuBar;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import org.steampunk.mist.AccountManager;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import org.steampunk.mist.model.Player;
 
 public class Mist extends JFrame{
 
@@ -92,11 +91,20 @@ public class Mist extends JFrame{
 	}
 	
 	private void setupTabs() {
-		addTab("Game Library", null, new GameLibraryTab(), null);
-		addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
+		if (AccountManager.getInstance().getCurrentUser() instanceof Player) {
+			// Player tabs
+			addTab("Store", null, new StoreTab(), null);
+			addTab("Game Library", null, new GameLibraryTab(), null);
+			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 				new UserDetailsTab(), null);
-		addTab("Clans", null, new ClansTab(), null);
-		tabbedPane.setSelectedIndex(0);
+			addTab("Clans", null, new ClansTab(), null);
+			addTab("Friends", null, new FriendsTab(), null);
+			tabbedPane.setSelectedIndex(1);
+		} else {
+			// Admin tabs
+			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
+					new UserDetailsTab(), null);
+		}
 	}
 }
 

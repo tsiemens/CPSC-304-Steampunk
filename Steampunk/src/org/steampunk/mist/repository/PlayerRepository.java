@@ -2,6 +2,7 @@ package org.steampunk.mist.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
@@ -80,4 +81,76 @@ public class PlayerRepository extends UserRepository{
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
+	
+	
+	public static boolean isFriend(String inviter, String invitee) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT inviterUsername, inviteeUsername"
+				+" FROM "+DatabaseSchema.TABLE_NAME_ARE_FRIENDS
+				+" WHERE inviterUsername = ?"
+				+ " AND inviteeUsername = ?", inviter, invitee);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if (rs.next()){
+				System.out.println("true");
+				return true;
+			} else {
+				System.out.println("false");
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading player data: "+e);
+		}
+
+	}
+	
+	public static void addFriend(String inviter, String invitee) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_ARE_FRIENDS
+					+" VALUES(?, ?)", inviter, invitee);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+		
+	}
+
+	public static void removeFriend(String inviter, String invitee) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("DELETE FROM " + DatabaseSchema.TABLE_NAME_ARE_FRIENDS
+					+" WHERE inviterUsername = ? AND inviteeUsername = ?", inviter, invitee);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+	}
+
+	public static Vector<String> getFriends(String inviter) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try{
+			rs = dbm.queryPrepared("SELECT inviteeUsername"
+					+ " FROM " + DatabaseSchema.TABLE_NAME_ARE_FRIENDS
+					+ " WHERE inviterUsername = ?", inviter);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		Vector<String> friends = new Vector<String>();
+		
+		try{
+			while (rs.next()){
+				friends.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading friends data: " + e);
+		}
+		return friends;
+	}
+	
 }

@@ -282,6 +282,9 @@ public class DatabaseManager {
 			} else if( parameters[i] instanceof java.sql.Date ) {
 				// Date
 				ps.setDate(i+1, ((java.sql.Date)parameters[i]));
+			} else if( parameters[i] instanceof java.sql.Timestamp ) {
+				// Date
+				ps.setTimestamp(i+1, ((java.sql.Timestamp)parameters[i]));
 			} else if( parameters[i] instanceof String ) {
 				// String
 				ps.setString(i+1, ((String)parameters[i]));

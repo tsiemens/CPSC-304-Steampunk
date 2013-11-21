@@ -65,7 +65,7 @@ public class DatabaseSchema {
 	
 	public static final String CREATE_TABLE_COMMENTS =
 		"CREATE TABLE " + TABLE_NAME_COMMENTS
-		+"(timestamp DATE,"
+		+"(timestamp TIMESTAMP,"
 		+"gameID INTEGER NOT NULL,"
 		+"username VARCHAR(20),"
 		+"text VARCHAR(500),"

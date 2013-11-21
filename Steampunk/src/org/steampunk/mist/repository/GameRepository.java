@@ -61,6 +61,40 @@ public class GameRepository {
 	}
 	
 	/**
+	 * Returns pairs of game names and ids only, that match the search term, sorted alphabetically
+	 * @param username
+	 * @return
+	 * @throws RepositoryErrorException
+	 */
+	public static Vector<GameNameIdPair> searchGames(String searchterm) throws RepositoryErrorException {
+		Vector<GameNameIdPair> games = new Vector<GameNameIdPair>();
+		
+		searchterm = searchterm.replace("%", "");
+		System.out.println("Searching '"+searchterm+"'");
+		if (searchterm.isEmpty()) { return games; }
+		
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT DISTINCT "+FIELD_GAMEID+", "+FIELD_NAME
+				+" FROM "+DatabaseSchema.TABLE_NAME_GAMES
+				+" WHERE UPPER("+FIELD_NAME+") LIKE UPPER('%'||?||'%')"
+				+" ORDER BY "+FIELD_NAME+" ASC", searchterm);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			while (rs.next()){
+				games.add(new GameNameIdPair(rs.getInt(FIELD_GAMEID), rs.getString(FIELD_NAME)));
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading game data: "+e);
+		}
+		return games;
+	}
+	
+	/**
 	 * Checks if the game exists
 	 * @param gameID
 	 * @return true if game exists, false otherwise

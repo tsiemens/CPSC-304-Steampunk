@@ -1,11 +1,7 @@
 package org.steampunk.mist.view;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,20 +10,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import javax.swing.JTextPane;
 
 import java.awt.FlowLayout;
 
 import javax.swing.BoxLayout;
 
 import java.awt.Component;
-import java.awt.GridLayout;
-import java.util.Calendar;
 import java.util.Vector;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTable;
 import javax.swing.Box;
 import javax.swing.UIManager;
 
@@ -36,6 +26,8 @@ import org.steampunk.mist.model.Admin;
 import org.steampunk.mist.model.Comment;
 import org.steampunk.mist.model.Game;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.CommentRepository;
+import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.view.list.CommentListPanel;
 
 public class GameDetailsPanel extends JPanel {
@@ -167,20 +159,13 @@ public class GameDetailsPanel extends JPanel {
 			}
 			mChangeDescButton.setVisible(userAdminsGame);
 			
-			Vector<Comment> cv = new Vector<Comment>();
-			cv.add(new Comment("some text", "derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("lskdjf skldjf klsdfkl sjdflksj dflskdj flksj dflksj dlksj dflkdsj fklj sdflkj sdfkljds fkljds flksj dflk sjdflksj dfklsj dfklsj dflkj sdflkj dsflkjds flksj dflkj dsfkldsj flksj dflkj dsfkldsj flkjds fklsj df kl jdsflkj sdfl kjdsfl kj sdf lkj dsfl kj sdflkj sdf", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			cv.add(new Comment("moew text", "other derp", 0, Calendar.getInstance()));
-			mCommentListPanel.setComments(cv);
+			Vector<Comment> cv;
+			try {
+				cv = CommentRepository.getCommentsForGame(mGame.getGameID());
+				mCommentListPanel.setComments(cv);
+			} catch (RepositoryErrorException e) {
+				System.err.println(e.toString());
+			}
 		}
 	}
 }
