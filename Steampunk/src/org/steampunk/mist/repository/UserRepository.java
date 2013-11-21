@@ -3,6 +3,7 @@ package org.steampunk.mist.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Vector;
 
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
@@ -93,6 +94,34 @@ public class UserRepository {
 		} catch (SQLException e) {
 			throw new RepositoryErrorException("Error reading user data: "+e);
 		}
+	}
+	
+	/**
+	 * Gets all users' usernames
+	 * @return list of users' usernames
+	 * @throws RepositoryErrorException
+	 */
+	public static Vector<String> getAllUsers() throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT username"
+				+" FROM "+DatabaseSchema.TABLE_NAME_USERS);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		Vector<String> usernames = new Vector<String>();
+		
+		try{
+			while (rs.next()){
+				usernames.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading user data: "+e);
+		}
+		
+		return usernames;
 	}
 	
 	/**

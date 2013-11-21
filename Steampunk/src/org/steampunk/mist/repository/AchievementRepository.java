@@ -223,8 +223,8 @@ public class AchievementRepository {
 		try {
 			rs = dbm.queryPrepared("SELECT username, gameID, achievementName"
 				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
-				+" WHERE username = ?", username
-				+" AND gameID = ?", gameID);
+				+" WHERE username = ?"
+				+" AND gameID = ?", username, gameID);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
@@ -293,9 +293,9 @@ public class AchievementRepository {
 			rs = dbm.queryPrepared("SELECT SUM(points) AS sum"
 				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
 				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS
-				+" WHERE username = ?", username
+				+" WHERE username = ?"
 				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".gameID = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".gameID"
-				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".achievementName = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".achievementName");
+				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".achievementName = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".achievementName", username);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
@@ -333,10 +333,10 @@ public class AchievementRepository {
 			rs = dbm.queryPrepared("SELECT SUM(points) AS sum"
 				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
 				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS
-				+" WHERE username = ?", username
-				+" AND gameID = ?", gameID
+				+" WHERE username = ?"
+				+" AND gameID = ?"
 				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".gameID = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".gameID"
-				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".achievementName = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".achievementName");
+				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".achievementName = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".achievementName", username, gameID);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
