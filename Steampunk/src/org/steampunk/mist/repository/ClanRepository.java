@@ -9,8 +9,6 @@ import java.util.Vector;
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
 import org.steampunk.mist.model.Clan;
-import org.steampunk.mist.repository.GameRepository.GameNameIdPair;
-import org.steampunk.mist.repository.GameRepository.GameNotFoundException;
 
 public class ClanRepository {
 

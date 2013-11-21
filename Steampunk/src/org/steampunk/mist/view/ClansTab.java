@@ -24,6 +24,9 @@ import org.steampunk.mist.repository.RepositoryErrorException;
 
 public class ClansTab extends JPanel implements ListSelectionListener {
 	
+
+	private static final long serialVersionUID = -2041630246524670880L;
+	
 	// member variables
 	Vector<ClanNameGameIdPair> mJoinedClans;
 	JList<ClanNameGameIdPair> mClanList;

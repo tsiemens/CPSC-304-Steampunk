@@ -14,6 +14,9 @@ import org.steampunk.mist.repository.ClanRepository.ClanNotFoundException;
 import org.steampunk.mist.repository.RepositoryErrorException;
 
 public class ClanDetailsPanel extends JPanel{
+
+	private static final long serialVersionUID = 2684693407186761173L;
+	
 	private JTextArea mClanMoDTextArea;
 	private JLabel mClanMemberCountLabel;
 	private JLabel mClanNameLabel;
