@@ -115,6 +115,27 @@ public class GameCopyRepository {
 		}
 	}
 	
+	public static boolean userOwnsGame(String username, int gameid) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT "+FIELD_GAMEKEY
+				+" FROM "+DatabaseSchema.TABLE_NAME_GAME_COPIES
+				+" WHERE "+FIELD_GAMEID+" = ? AND "+FIELD_OWNER+" = ?", gameid, username);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if (rs.next()){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading game copy data: "+e);
+		}
+	}
 
 	/**
 	 * populates the game copy with data from the database

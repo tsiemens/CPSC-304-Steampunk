@@ -353,5 +353,36 @@ public class AchievementRepository {
 		
 		return sum;
 	}
+	
+	public static boolean playerHasEarnedAchievement(Achievement achmt, String username) 
+			throws RepositoryErrorException {
+		if (username == null){
+			return false;
+		}
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT "+FIELD_ACHIEVEMENT_NAME
+				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED+" he"
+				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+" a"
+				+" WHERE he.gameID = a.gameID"
+				+" AND a.achievementName = he.achievementName"
+				+" AND a.gameID = ?"
+				+" AND he.username = ?"
+				+" AND a.achievementName = ?", achmt.getGameID(), username,
+				achmt.getAchievementName());
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if(rs.next()){
+				return true;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading achievement data: "+e);
+		}
+		return false;
+	}
 
 }

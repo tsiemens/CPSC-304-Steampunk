@@ -25,9 +25,14 @@ import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Admin;
 import org.steampunk.mist.model.Comment;
 import org.steampunk.mist.model.Game;
+import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.CommentRepository;
+import org.steampunk.mist.repository.GameCopyRepository;
+import org.steampunk.mist.repository.GameRepository;
+import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
+import org.steampunk.mist.view.list.AchievementListPanel;
 import org.steampunk.mist.view.list.CommentListPanel;
 
 public class GameDetailsPanel extends JPanel {
@@ -36,11 +41,19 @@ public class GameDetailsPanel extends JPanel {
 	
 	private JLabel mGameTitleLabel;
 	private JLabel mRatingLabel;
-	private JButton mChangeDescButton;
+	
+	private JButton mEditDescButton;
+	private JButton mEditTitleButton;
+	private JButton mCreateClanButton;
+	private JButton mEditRatingButton;
+	private JButton mEditPubButton;
+	private JButton mBuyButton;
+	
 	private JTextArea mDescriptionText;
 	private JLabel mPublisherLabel;
 	
 	CommentListPanel mCommentListPanel;
+	AchievementListPanel mAchievementsPanel;
 	
 	private Game mGame;
 	
@@ -54,10 +67,40 @@ public class GameDetailsPanel extends JPanel {
 	private void createView() {
 		setLayout(new BorderLayout(0, 0));
 		
+		JPanel titlepanel = new JPanel();
+		add(titlepanel, BorderLayout.NORTH);
+		
 		mGameTitleLabel = new JLabel("<Title>");
+		titlepanel.add(mGameTitleLabel);
 		mGameTitleLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		mGameTitleLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		add(mGameTitleLabel, BorderLayout.NORTH);
+		
+		mEditTitleButton = new JButton("Edit Title");
+		titlepanel.add(mEditTitleButton);
+		mEditTitleButton.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("implement (edit title)");	
+			}
+		});
+		
+		mCreateClanButton = new JButton("Create New Clan");
+		titlepanel.add(mCreateClanButton);
+		mCreateClanButton.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("implement (create clan)");	
+			}
+		});
+		
+		mBuyButton = new JButton("Buy: Free");
+		titlepanel.add(mBuyButton);
+		mBuyButton.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("implement (buy)");	
+			}
+		});
 		
 		JPanel panel = new JPanel();
 		add(panel, BorderLayout.WEST);
@@ -77,15 +120,14 @@ public class GameDetailsPanel extends JPanel {
 		mDescriptionText.setSize(300, 100);
 		mDescriptionText.setEditable(false);
 		mDescriptionText.setWrapStyleWord(true);
-		mDescriptionText.setText("lksjdfkljsd lksdj fl ksdflkj sdflkj dsflkj sdfl kj dsl fkj sdl fkjdslf kjsdf klj sd fkljdsf klj sdflkj sd f");
+		mDescriptionText.setText("No description");
 		
-		mChangeDescButton = new JButton("Edit Description");
-		panel_1.add(mChangeDescButton);
-		mChangeDescButton.addActionListener(new ActionListener() {
-			
+		mEditDescButton = new JButton("Edit Description");
+		panel_1.add(mEditDescButton);
+		mEditDescButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("implement (2)");	
+				System.out.println("implement (edit desc)");	
 			}
 		});
 		
@@ -103,6 +145,15 @@ public class GameDetailsPanel extends JPanel {
 		mRatingLabel = new JLabel("New label");
 		panel_2.add(mRatingLabel);
 		
+		mEditRatingButton = new JButton("Edit Rating");
+		panel_2.add(mEditRatingButton);
+		mEditRatingButton.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("implement (edit rating)");	
+			}
+		});
+		
 		JPanel panel_3 = new JPanel();
 		verticalBox.add(panel_3);
 		FlowLayout flowLayout_2 = (FlowLayout) panel_3.getLayout();
@@ -113,6 +164,15 @@ public class GameDetailsPanel extends JPanel {
 		
 		mPublisherLabel = new JLabel("New label");
 		panel_3.add(mPublisherLabel);
+		
+		mEditPubButton = new JButton("Edit Publisher");
+		panel_3.add(mEditPubButton);
+		mEditPubButton.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("implement (edit pub)");	
+			}
+		});
 		
 		JPanel panel_4 = new JPanel();
 		panel.add(panel_4);
@@ -125,8 +185,13 @@ public class GameDetailsPanel extends JPanel {
 		mCommentListPanel = new CommentListPanel();
 		panel_4.add(mCommentListPanel, BorderLayout.CENTER);
 		
+		// This panel will hold the achievements and keys views
 		JPanel panel_5 = new JPanel();
+		panel_5.setLayout(new BoxLayout(panel_5, BoxLayout.Y_AXIS));
 		add(panel_5, BorderLayout.EAST);
+		
+		mAchievementsPanel = new AchievementListPanel();
+		panel_5.add(mAchievementsPanel);
 		
 		JLabel lblSideColumn = new JLabel("side column");
 		panel_5.add(lblSideColumn);
@@ -152,12 +217,26 @@ public class GameDetailsPanel extends JPanel {
 			mPublisherLabel.setText(mGame.getPublisher());
 			
 			boolean userAdminsGame = false;
+			boolean userOwnsGame = false;
 			User cUser = AccountManager.getInstance().getCurrentUser();
 			if (cUser instanceof Admin) {
 				// TODO check if admin owns this game
 				userAdminsGame = true;
+			} else {
+				try {
+					userOwnsGame = GameCopyRepository.userOwnsGame(cUser.getUsername(), mGame.getGameID());
+				} catch (RepositoryErrorException e) {
+					e.printStackTrace();
+					userOwnsGame = false;
+				}
 			}
-			mChangeDescButton.setVisible(userAdminsGame);
+			mEditDescButton.setVisible(userAdminsGame);
+			mEditPubButton.setVisible(userAdminsGame);
+			mEditTitleButton.setVisible(userAdminsGame);
+			mEditRatingButton.setVisible(userAdminsGame);
+			
+			mCreateClanButton.setVisible(!userAdminsGame && userOwnsGame);
+			mBuyButton.setVisible(!userOwnsGame);
 			
 			Vector<Comment> cv;
 			try {
