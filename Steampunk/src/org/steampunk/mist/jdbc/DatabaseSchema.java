@@ -119,7 +119,6 @@ public class DatabaseSchema {
 		+"(username VARCHAR(20),"
 		+"clanName VARCHAR(50),"
 		+"gameID INTEGER,"
-		+"rank VARCHAR(20),"
 		+"memberSince DATE,"
 		+"PRIMARY KEY (username, clanName, gameID),"
 		+"FOREIGN KEY (username) REFERENCES Players "

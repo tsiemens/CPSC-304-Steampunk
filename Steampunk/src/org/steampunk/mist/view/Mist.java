@@ -95,6 +95,7 @@ public class Mist extends JFrame{
 		addTab("Game Library", null, new GameLibraryTab(), null);
 		addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 				new UserDetailsTab(), null);
+		addTab("Clans", null, new ClansTab(), null);
 		tabbedPane.setSelectedIndex(0);
 	}
 }
