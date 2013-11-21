@@ -46,8 +46,6 @@ public class SystemAdminUsersTab extends JPanel {
 	private static Vector<GameNameIdPair> games;
 	private static JScrollPane gameScrollPane;
 	private static JScrollPane userScrollPane;
-//	private static JButton btnSearchUsers;
-//	private static JTextField searchUsersTextField;
 		
 	public SystemAdminUsersTab() {
 
@@ -92,30 +90,7 @@ public class SystemAdminUsersTab extends JPanel {
 		gbc_mUsername.gridx = 4;
 		gbc_mUsername.gridy = 1;
 		panel.add(mUsername, gbc_mUsername);
-/*		
-		//Search Users Button setup
-		btnSearchUsers = new JButton("Search Users");
-		btnSearchUsers.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				setUserList(searchUsersTextField.getText());
-			}
-		});
-		GridBagConstraints gbc_btnSearchUsers = new GridBagConstraints();
-		gbc_btnSearchUsers.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSearchUsers.gridx = 0;
-		gbc_btnSearchUsers.gridy = 1;
-		panel.add(btnSearchUsers, gbc_btnSearchUsers);
-		
-		//Search Users text field setup
-		searchUsersTextField = new JTextField();
-		GridBagConstraints gbc_searchUsersTextField = new GridBagConstraints();
-		gbc_searchUsersTextField.insets = new Insets(0, 0, 5, 5);
-		gbc_searchUsersTextField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_searchUsersTextField.gridx = 1;
-		gbc_searchUsersTextField.gridy = 1;
-		panel.add(searchUsersTextField, gbc_searchUsersTextField);
-		searchUsersTextField.setColumns(20);
-*/		
+
 		//User Email Label setup
 		lblUserEmailLabel = new JLabel("User email:");
 		GridBagConstraints gbc_lblUserEmailLabel = new GridBagConstraints();
@@ -286,9 +261,7 @@ public class SystemAdminUsersTab extends JPanel {
 	        if (userList.getSelectedIndex() == -1) {
 	        	//No selection, do nothing.
 	        } else {
-	        	//Selection, reset user details.
-//	        	System.out.println("Selected index: "+userList.getSelectedIndex());
-	        	
+	        	//Selection, reset user details.	        	
 	        	//Test if user is a player
 	        	Boolean isPlayer = false;
 				try {
@@ -359,7 +332,6 @@ public class SystemAdminUsersTab extends JPanel {
 
 	private static void setUserList() {
 		try {
-//			users = UserRepository.searchUsers(username);
 			users = UserRepository.getAllUsers();
 			userList.setListData(users);
 		} catch (RepositoryErrorException e) {

@@ -95,42 +95,6 @@ public class UserRepository {
 			throw new RepositoryErrorException("Error reading user data: "+e);
 		}
 	}
-/*	
-	/**
-	 * Returns the usernames that match the search term, sorted alphabetically
-	 * @param username
-	 * @return
-	 * @throws RepositoryErrorException
-	 */
-/*	public static Vector<String> searchUsers(String searchterm) throws RepositoryErrorException {
-		Vector<String> usernames = new Vector<String>();
-		
-		searchterm = searchterm.replace("%", "");
-		System.out.println("Searching '"+searchterm+"'");
-		if (searchterm.isEmpty()) { return usernames; }
-		
-		DatabaseManager dbm = DatabaseManager.getInstance();
-		ResultSet rs;
-		try {
-			rs = dbm.queryPrepared("SELECT DISTINCT "+FIELD_USERNAME
-				+" FROM "+DatabaseSchema.TABLE_NAME_GAMES
-				+" WHERE UPPER("+FIELD_USERNAME+") LIKE UPPER('%'||?||'%')"
-				+" ORDER BY "+FIELD_USERNAME+" ASC", searchterm);
-		} catch (SQLException e) {
-			 throw new RepositoryErrorException(e.getMessage());
-		}
-		
-		try{
-			while (rs.next()){
-				usernames.add(rs.getString(FIELD_USERNAME));
-			}
-		} catch (SQLException e) {
-			throw new RepositoryErrorException("Error reading game data: "+e);
-		}
-		
-		return usernames;
-	}
-*/
 	
 	/**
 	 * Gets all users' usernames
