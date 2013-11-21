@@ -121,6 +121,9 @@ public class CustomOptionPane extends JOptionPane{
 		    
 		    return newUserVector;
 		}
+		if(option == 3){
+			return null;
+		}
 		return null;
 		
 	}

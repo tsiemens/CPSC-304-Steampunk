@@ -57,9 +57,9 @@ public class SystemAdminUsersTab extends JPanel {
 		JPanel panel = new JPanel();
 		add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] {0, 100, 0, 46, 30, 0};
-		gbl_panel.rowHeights = new int[] {0, 14, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, 0.0};
+		gbl_panel.columnWidths = new int[] {0, 150, 0, 150, 30, 0};
+		gbl_panel.rowHeights = new int[] {0, 14, 25, 25, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0};
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0};
 		panel.setLayout(gbl_panel);
 		
@@ -215,7 +215,7 @@ public class SystemAdminUsersTab extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		 
 	}
 
 	private void showAddUserDialog(){
@@ -226,6 +226,9 @@ public class SystemAdminUsersTab extends JPanel {
 		 * //add type of user selection
 		 */
 		Vector<String> userVector = CustomOptionPane.showAddUserDialog(this, "Fill in all fields below", "Add User", null);
+		if(userVector == null){
+			return;
+		}
 		if(userVector.elementAt(3) == "Player"){
 			Player player = new Player();
 			
@@ -284,7 +287,7 @@ public class SystemAdminUsersTab extends JPanel {
 	        	//No selection, do nothing.
 	        } else {
 	        	//Selection, reset user details.
-	        	System.out.println("Selected index: "+userList.getSelectedIndex());
+//	        	System.out.println("Selected index: "+userList.getSelectedIndex());
 	        	
 	        	//Test if user is a player
 	        	Boolean isPlayer = false;
@@ -367,7 +370,6 @@ public class SystemAdminUsersTab extends JPanel {
 	}
 
 	private static void refreshGameList(String username) {
-		// TODO Auto-generated method stub
 		//If User is not Player, make sure the game list and label aren't put on the screen.
 		try {
 			if (!PlayerRepository.playerExists(username)){
@@ -376,6 +378,9 @@ public class SystemAdminUsersTab extends JPanel {
 				lblGamesOfUser.setVisible(false);				
 			}else{
 				setUpGameList(username);
+				gameScrollPane.setVisible(true);
+				gameList.setVisible(true);
+				lblGamesOfUser.setVisible(true);
 			}
 		} catch (RepositoryErrorException e) {
 			// TODO Auto-generated catch block
