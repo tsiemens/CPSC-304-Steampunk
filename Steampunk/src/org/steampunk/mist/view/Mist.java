@@ -15,12 +15,16 @@ import javax.swing.JTabbedPane;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Player;
+import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.RepositoryErrorException;
 
 public class Mist extends JFrame{
 
 	private static final long serialVersionUID = 234794033610547082L;
 	
 	private JTabbedPane tabbedPane;
+	private String username;
+	private int permissionTier;
 
 	/**
 	 * Create the application.
@@ -102,9 +106,25 @@ public class Mist extends JFrame{
 			tabbedPane.setSelectedIndex(1);
 		} else {
 			// Admin tabs
-			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
-					new UserDetailsTab(), null);
-			addTab("Users", null, new SystemAdminUsersTab(), null);
+			username= AccountManager.getInstance().getCurrentUser().getUsername();
+			try {
+				permissionTier = AdminRepository.getAdminPermissionTier(username);
+			} catch (RepositoryErrorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (permissionTier == 0) {
+				addTab(username, null, new UserDetailsTab(), null);
+				addTab("Users", null, new SystemAdminUsersTab(), null);
+				addTab("Games", null, new GameAdminTab(), null);
+			}
+			if (permissionTier == 1) {
+				addTab(username, null, new UserDetailsTab(), null);
+
+				addTab("Games", null, new GameAdminTab(), null);
+			}
+
 		}
 	}
 }
