@@ -119,7 +119,7 @@ public class Mist extends JFrame{
 				addTab("Users", null, new SystemAdminUsersTab(), null);
 				addTab("Games", null, new GameAdminTab(), null);
 			}
-			if (permissionTier == 1) {
+			if (permissionTier == 2) {
 				addTab(username, null, new UserDetailsTab(), null);
 
 				addTab("Games", null, new GameAdminTab(), null);

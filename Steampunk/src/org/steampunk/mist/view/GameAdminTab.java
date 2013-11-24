@@ -45,8 +45,9 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 	 */
 	private static final long serialVersionUID = 2155537548470194331L;
 	
-	
+	Vector<String> mGamesAdministered;
 	JLabel mGAmesAdminsteredLabel;
+	String administrator = AccountManager.getInstance().getCurrentUser().getUsername();
 	JList<String> mGamesList;
 	
 	public GameAdminTab() {
@@ -123,8 +124,12 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 
 
 	private void refreshGamesList() {
-		// TODO Auto-generated method stub
-		
+		try {
+			mGamesAdministered = PlayerRepository.getFriends(administrator);/// not done ///
+			mGamesList.setListData(mGamesAdministered);
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to get games "+e);
+		}
 	}
 
 

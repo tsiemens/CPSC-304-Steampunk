@@ -26,9 +26,12 @@ public class DatabasePopulator {
 	public static boolean addRequiredEntities(){
 		byte[] salt = User.generateSalt();
 		byte[] passhash = User.getHash("root", salt);
+		byte[] passhash2 = User.getHash("admin", salt);
 		Admin admin = new Admin(Admin.ADMIN_TIER_ROOT, "root", passhash, salt, "root@root", Calendar.getInstance());
+		Admin adminGame = new Admin(Admin.ADMIN_TIER_GAME_MOD, "tier1admin", passhash2, salt, "tier1@admin", Calendar.getInstance());
 		try {
 			AdminRepository.addAdmin(admin);
+			AdminRepository.addAdmin(adminGame);
 			return true;
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add required entities "+e);
@@ -211,6 +214,27 @@ public class DatabasePopulator {
 		// ----- CLAN MEMBERSHIPS (IS MEMBER) -----
 		try {
 			
+			GameCopyRepository.addGameAdministered("tier1admin", 1);
+			
+			GameCopyRepository.addGameAdministered("tier1admin", 2);
+			
+			GameCopyRepository.addGameAdministered("tier1admin", 3);
+			
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to add demo comments "+e);
+		}
+		
+		// ----- ACHIEVEMENTS -----
+		
+		// ----- ADMINS -----
+		
+		// ----- ARE FRIENDS -----
+		
+		// ----- ADMINISTRATES -----
+		// todo 
+		
+		try {
+			
 			Calendar testDate = Calendar.getInstance();
 			
 			testDate.set(2013, 5, 28);
@@ -229,16 +253,8 @@ public class DatabasePopulator {
 			ClanRepository.addClanMember("MyWayOrTheHighWay", 3, "Beanny", testDate);
 			
 		} catch (RepositoryErrorException e) {
-			System.err.println("Failed to add demo comments "+e);
+			System.err.println("Failed to add administrates "+e);
 		}
-		
-		// ----- ACHIEVEMENTS -----
-		
-		// ----- ADMINS -----
-		
-		// ----- ARE FRIENDS -----
-		
-		// ----- ADMINISTRATES -----
 		
 		// ----- HAS EARNED -----
 		
