@@ -1,3 +1,4 @@
+
 package org.steampunk.mist.repository;
 
 import java.sql.Date;
@@ -116,6 +117,27 @@ public class GameCopyRepository {
 		}
 	}
 	
+	public static boolean userOwnsGame(String username, int gameid) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT "+FIELD_GAMEKEY
+				+" FROM "+DatabaseSchema.TABLE_NAME_GAME_COPIES
+				+" WHERE "+FIELD_GAMEID+" = ? AND "+FIELD_OWNER+" = ?", gameid, username);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if (rs.next()){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading game copy data: "+e);
+		}
+	}
 
 	/**
 	 * populates the game copy with data from the database
@@ -153,18 +175,42 @@ public class GameCopyRepository {
 		}
 	}
 	
-	public static void updateOwner(String gameKey, String username) throws RepositoryErrorException
-	{
-		updateField(gameKey, FIELD_OWNER, username);
+	public static boolean purchaseCopyOfGame(int gameID, String username) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT "+FIELD_GAMEKEY
+				+" FROM "+DatabaseSchema.TABLE_NAME_GAME_COPIES
+				+" WHERE "+FIELD_GAMEID+" = ?"
+				+" AND "+FIELD_PURCHASE_DATE+" IS NULL", gameID);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			while (rs.next()){
+				if (purchaseCopy(rs.getString(FIELD_GAMEKEY), username)) {
+					// Successfully purchased the game
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading game copy data: "+e);
+		}
 	}
 	
-	private static void updateField(String gameKey, String field, Object newVal) throws RepositoryErrorException
+	public static boolean purchaseCopy(String gameKey, String username) throws RepositoryErrorException
 	{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
-			dbm.updatePrepared("UPDATE "+DatabaseSchema.TABLE_NAME_GAME_COPIES
-				+" SET "+field+" = ?"
-				+" WHERE gameKey = ?", newVal, gameKey);
+			int rowcount = dbm.updatePrepared("UPDATE "+DatabaseSchema.TABLE_NAME_GAME_COPIES
+				+" SET "+FIELD_OWNER+" = ?"
+				+", "+FIELD_PURCHASE_DATE+" = ?"
+				+" WHERE gameKey = ?"
+				+" AND "+FIELD_PURCHASE_DATE+" IS NULL", username, 
+				new Date(Calendar.getInstance().getTimeInMillis()), gameKey);
+			return rowcount == 1?true:false;
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
@@ -173,14 +219,19 @@ public class GameCopyRepository {
 	public static void addGameCopy(GameCopy copy) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
-			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_GAME_COPIES +"(gameKey, gameID, ownerUsername, purchaseDate)"
-					+" VALUES(?, ?, ?, ?)", copy.getGameKey(), copy.getGameID(), copy.getOwnerUsername(),
-					new Date(copy.getPurchaseDate().getTimeInMillis()));
+			if (copy.getPurchaseDate() != null) {
+				dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_GAME_COPIES +"(gameKey, gameID, ownerUsername, purchaseDate)"
+						+" VALUES(?, ?, ?, ?)", copy.getGameKey(), copy.getGameID(), copy.getOwnerUsername(),
+						new Date(copy.getPurchaseDate().getTimeInMillis()));
+			} else {
+				dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_GAME_COPIES +"(gameKey, gameID)"
+						+" VALUES(?, ?)", copy.getGameKey(), copy.getGameID());
+			}
 		} catch (SQLException e) {
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
-	
+
 	public static void addGameAdministered(String adminName, int gameID) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
@@ -190,27 +241,27 @@ public class GameCopyRepository {
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
-	
-	
+
+
 	// still not done
 	public static Vector<String> getGameAdministered(String adminName) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
 			rs = dbm.queryPrepared("SELECT g.gameName"
-				+" FROM "+ DatabaseSchema.TABLE_NAME_GAMES + " g, "
-				+ DatabaseSchema.TABLE_NAME_ADMINISTRATES + " a"
-				+" WHERE g.gameid = a.gameid and a.username = ?", adminName);
+					+" FROM "+ DatabaseSchema.TABLE_NAME_GAMES + " g, "
+					+ DatabaseSchema.TABLE_NAME_ADMINISTRATES + " a"
+					+" WHERE g.gameid = a.gameid and a.username = ?", adminName);
 		} catch (SQLException e) {
-			 throw new RepositoryErrorException(e.getMessage());
+			throw new RepositoryErrorException(e.getMessage());
 		}
-		
+
 		Vector<String> gameNames = new Vector<String>();
-				
+
 		try{
 			while (rs.next()){
 				gameNames.add(rs.getString(1));
-				
+
 			}
 
 		} catch (SQLException e) {
@@ -218,9 +269,9 @@ public class GameCopyRepository {
 		}
 		return gameNames;
 	}
-	
+
 	public static class GameCopyNotFoundException extends Exception{	
-		
+
 		private static final long serialVersionUID = -4327940496520103396L;
 
 		GameCopyNotFoundException(String reason) {
@@ -228,3 +279,4 @@ public class GameCopyRepository {
 		}
 	}
 }
+
