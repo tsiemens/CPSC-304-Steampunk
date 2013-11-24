@@ -181,11 +181,11 @@ public class GameCopyRepository {
 		}
 	}
 	
-	public static void addGameAdministered(String username, int gameID) throws RepositoryErrorException{
+	public static void addGameAdministered(String adminName, int gameID) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
 			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_ADMINISTRATES +"(username, gameID)"
-					+" VALUES(?, ?)", username, gameID);
+					+" VALUES(?, ?)", adminName, gameID);
 		} catch (SQLException e) {
 			throw new RepositoryErrorException(e.getMessage());
 		}
@@ -193,13 +193,13 @@ public class GameCopyRepository {
 	
 	
 	// still not done
-	public static Vector<String> getGameAdministered(String username) throws RepositoryErrorException{
+	public static Vector<String> getGameAdministered(String adminName) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
 			rs = dbm.queryPrepared("SELECT gameID"
 				+" FROM "+DatabaseSchema.TABLE_NAME_ADMINISTRATES
-				+" WHERE username = ?", username);
+				+" WHERE username = ?", adminName);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}

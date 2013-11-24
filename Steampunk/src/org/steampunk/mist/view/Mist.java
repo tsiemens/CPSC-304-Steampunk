@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.model.Admin;
 import org.steampunk.mist.model.Player;
 import org.steampunk.mist.repository.AdminRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
@@ -113,15 +114,14 @@ public class Mist extends JFrame{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			if (permissionTier == 0) {
+			// different levels of admins
+			if (permissionTier == Admin.ADMIN_TIER_SYS_MOD) {
 				addTab(username, null, new UserDetailsTab(), null);
 				addTab("Users", null, new SystemAdminUsersTab(), null);
 				addTab("Games", null, new GameAdminTab(), null);
 			}
-			if (permissionTier == 2) {
+			if (permissionTier == Admin.ADMIN_TIER_GAME_MOD) {
 				addTab(username, null, new UserDetailsTab(), null);
-
 				addTab("Games", null, new GameAdminTab(), null);
 			}
 

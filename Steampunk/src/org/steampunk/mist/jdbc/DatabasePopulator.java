@@ -27,7 +27,7 @@ public class DatabasePopulator {
 		byte[] salt = User.generateSalt();
 		byte[] passhash = User.getHash("root", salt);
 		byte[] passhash2 = User.getHash("admin", salt);
-		Admin admin = new Admin(Admin.ADMIN_TIER_ROOT, "root", passhash, salt, "root@root", Calendar.getInstance());
+		Admin admin = new Admin(Admin.ADMIN_TIER_SYS_MOD, "root", passhash, salt, "root@root", Calendar.getInstance());
 		Admin adminGame = new Admin(Admin.ADMIN_TIER_GAME_MOD, "tier1admin", passhash2, salt, "tier1@admin", Calendar.getInstance());
 		try {
 			AdminRepository.addAdmin(admin);
