@@ -9,6 +9,7 @@ import java.util.Vector;
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
 import org.steampunk.mist.model.Clan;
+import org.steampunk.mist.repository.GameRepository.GameNotFoundException;
 
 public class ClanRepository {
 
@@ -198,8 +199,120 @@ public class ClanRepository {
 	 * @return a string including all of the games that are shared by all members, separated by commas
 	 * @throws RepositoryErrorException
 	 */	
-	public static String getMutualGames(String clanName, int gameID) throws RepositoryErrorException {
-		return "Test";
+	public static Vector<String> getSharedGames(String clanName, int gameID) throws RepositoryErrorException {
+		/*
+		 * Query:
+		 *  CREATE OR REPLACE VIEW r AS
+		 *  SELECT gameID, ownerUsername
+		 *  FROM gameCopies;
+		 *  
+		 *  CREATE OR REPLACE VIEW s AS
+		 *  SELECT username
+		 *  FROM isMember
+		 *  WHERE clanName = clanName
+		 *  AND gameID = gameID;
+		 *  
+		 *  CREATE OR REPLACE VIEW xProjection AS
+		 *  SELECT gameID
+		 *  FROM r;
+		 *  
+		 *  CREATE OR REPLACE VIEW xProjOfCrossSMinusR AS
+		 *  SELECT *
+		 *  FROM xProjection, s
+		 *  MINUS
+		 *  SELECT *
+		 *  FROM r;
+		 *  
+		 *  CREATE OR REPLACE VIEW dqXvalues AS
+		 *  SELECT gameID
+		 *  FROM xProjOfCrossSMinusR;
+		 *  
+		 *  SELECT gameID
+		 *  FROM r
+		 *  MINUS
+		 *  SELECT gameID
+		 *  FROM dqXvalues;
+		 *  
+		 * 
+		 * 
+		 *
+		 */
+		
+		Vector<String> sharedGameNames = new Vector<String>();
+		
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		
+		try {
+			/*
+			dbm.queryPrepared("CREATE OR REPLACE VIEW r AS"
+					+" SELECT gameID, ownerUsername "
+					+" FROM gameCopies");
+			
+			dbm.queryPrepared("CREATE OR REPLACE VIEW s AS"
+					+" SELECT username"
+					+" FROM isMember"
+					+" WHERE clanName = ?"
+					+" AND gameID = ?", clanName, gameID);
+			
+			dbm.queryPrepared("CREATE OR REPLACE VIEW xProjection AS"
+					+" SELECT gameID"
+					+" FROM r");
+			
+			dbm.queryPrepared("CREATE OR REPLACE VIEW XProjOfCrossSMinusR AS"
+					+" SELECT *"
+					+" FROM xProjection, s"
+					+" MINUS"
+					+" SELECT *"
+					+" FROM r");
+			
+			dbm.queryPrepared("CREATE OR REPLACE VIEW dqXvalues AS"
+					+" SELECT gameID"
+					+" FROM xProjOfCrossSMinusR");
+			
+			rs = dbm.queryPrepared("SELECT gameID"
+					+" FROM r"
+					+" MINUS"
+					+" SELECT gameID"
+					+" FROM dqXvalues");
+			*/
+			
+			rs = dbm.queryPrepared("SELECT gameID"
+								 +" FROM (SELECT gameID, ownerUsername"
+								 	  + " FROM gameCopies)"
+								 +" MINUS"
+								 +" SELECT gameID"
+								 +" FROM (SELECT gameID"
+								 	   +" FROM (SELECT *"
+								 	   +" FROM"
+								 	  		+" (SELECT gameID"
+								 	  		 +" FROM (SELECT gameID, ownerUsername"
+								 	  			   +" FROM gameCopies)),"
+								 	  		+" (SELECT username"
+								 	  		 +" FROM isMember"
+								 	  		 +" WHERE clanName = ? AND gameID = ?)"
+								 +" MINUS"
+								 +" SELECT *"
+								 +" FROM (SELECT gameID, ownerUsername"
+								  	   +" FROM gameCopies)))", 
+								 clanName, gameID);
+			
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		System.out.println("Result of query: ");
+		try{
+			while (rs.next()){
+				sharedGameNames.add(GameRepository.getGameName(rs.getInt("gameID")));
+			} 
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading clan data: "+e);
+		} catch (GameNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return sharedGameNames;
 	}
 	
 	/**
