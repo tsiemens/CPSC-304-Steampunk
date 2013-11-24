@@ -156,6 +156,10 @@ public class DatabasePopulator {
 			demoCopy = new GameCopy("qx09m-8bg3k-sloee-dneh8", 1, "Anthony", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
 
+			testDate.set(2013, 0, 1);
+			demoCopy = new GameCopy("333-333-332", 5, "SWAG", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
 			demoCopy = new GameCopy("333-333-334", 5, null, null);
 			GameCopyRepository.addGameCopy(demoCopy);
 
@@ -216,7 +220,7 @@ public class DatabasePopulator {
 		}
 		
 		
-		// ----- CLAN MEMBERSHIPS (IS MEMBER) -----
+		// ----- ADMINISTRATES -----
 		try {
 			
 			GameCopyRepository.addGameAdministered("tier1admin", 1);
@@ -226,7 +230,7 @@ public class DatabasePopulator {
 			GameCopyRepository.addGameAdministered("tier1admin", 3);
 			
 		} catch (RepositoryErrorException e) {
-			System.err.println("Failed to add demo comments "+e);
+			System.err.println("Failed to add demo admins "+e);
 		}
 		
 		// ----- ACHIEVEMENTS -----
@@ -253,7 +257,7 @@ public class DatabasePopulator {
 		
 		// ----- ADMINISTRATES -----
 		// todo 
-		
+		// ----- CLAN MEMBERSHIPS (IS MEMBER) -----
 		try {
 			
 			Calendar testDate = Calendar.getInstance();

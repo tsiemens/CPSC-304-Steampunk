@@ -210,9 +210,6 @@ public class GameDetailsPanel extends JPanel {
 		
 		mAchievementsPanel = new AchievementListPanel();
 		panel_5.add(mAchievementsPanel);
-		
-		JLabel lblSideColumn = new JLabel("side column");
-		panel_5.add(lblSideColumn);
 
 		onCreateView();
 	}
