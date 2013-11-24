@@ -197,9 +197,10 @@ public class GameCopyRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT gameID"
-				+" FROM "+DatabaseSchema.TABLE_NAME_ADMINISTRATES
-				+" WHERE username = ?", adminName);
+			rs = dbm.queryPrepared("SELECT g.gameName"
+				+" FROM "+ DatabaseSchema.TABLE_NAME_GAMES + " g, "
+				+ DatabaseSchema.TABLE_NAME_ADMINISTRATES + " a"
+				+" WHERE g.gameid = a.gameid and a.username = ?", adminName);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}

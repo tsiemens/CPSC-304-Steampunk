@@ -83,7 +83,7 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 				
 				JScrollPane scrollPane = new JScrollPane();
 				panel.add(scrollPane);
-				scrollPane.setPreferredSize(new Dimension(140, 230));
+				scrollPane.setPreferredSize(new Dimension(250, 230));
 				
 				mGamesList = new JList<String>();
 				mGamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
