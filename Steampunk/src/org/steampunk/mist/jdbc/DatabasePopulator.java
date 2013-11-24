@@ -212,26 +212,6 @@ public class DatabasePopulator {
 		
 		
 		// ----- CLAN MEMBERSHIPS (IS MEMBER) -----
-		try {
-			
-			GameCopyRepository.addGameAdministered("tier1admin", 1);
-			
-			GameCopyRepository.addGameAdministered("tier1admin", 2);
-			
-			GameCopyRepository.addGameAdministered("tier1admin", 3);
-			
-		} catch (RepositoryErrorException e) {
-			System.err.println("Failed to add demo comments "+e);
-		}
-		
-		// ----- ACHIEVEMENTS -----
-		
-		// ----- ADMINS -----
-		
-		// ----- ARE FRIENDS -----
-		
-		// ----- ADMINISTRATES -----
-		// todo 
 		
 		try {
 			
@@ -254,6 +234,26 @@ public class DatabasePopulator {
 			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add administrates "+e);
+		}
+		
+		// ----- ACHIEVEMENTS -----
+		
+		// ----- ADMINS -----
+		
+		// ----- ARE FRIENDS -----
+		
+		// ----- ADMINISTRATES -----
+		
+		try {
+			
+			GameCopyRepository.addGameAdministered("tier1admin", 1);
+			
+			GameCopyRepository.addGameAdministered("tier1admin", 2);
+			
+			GameCopyRepository.addGameAdministered("tier1admin", 3);
+			
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to add demo comments "+e);
 		}
 		
 		// ----- HAS EARNED -----
