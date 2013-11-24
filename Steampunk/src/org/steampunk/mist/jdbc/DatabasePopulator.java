@@ -3,12 +3,14 @@ package org.steampunk.mist.jdbc;
 import java.util.Calendar;
 
 import org.steampunk.mist.model.Admin;
+import org.steampunk.mist.model.Clan;
 import org.steampunk.mist.model.Comment;
 import org.steampunk.mist.model.Game;
 import org.steampunk.mist.model.GameCopy;
 import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.ClanRepository;
 import org.steampunk.mist.repository.CommentRepository;
 import org.steampunk.mist.repository.GameCopyRepository;
 import org.steampunk.mist.repository.GameRepository;
@@ -39,18 +41,74 @@ public class DatabasePopulator {
 	 */
 	public static void demoPopulate() {
 		System.out.println("Populating database with demo entities and relationships... ");
-		// Sample Players
+		
+		// ----- PLAYERS -----
+		// TODO: Change passwords
+		
 		byte[] salt = User.generateSalt();
 		byte[] passhash = User.getHash("123", salt);
 		Player player = new Player("SWAG", passhash, salt, "xSWAGYOLO420x@pleaseignore.com", Calendar.getInstance());
 		try {
 			PlayerRepository.addPlayer(player);
+			
+			Calendar testDate = Calendar.getInstance();
+			
+			testDate.set(2009, 5, 16);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("John Doe", passhash, salt, "johndoe123@gmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2012, 2, 5);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Anthony", passhash, salt, "anthony223@gmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2010, 8, 8);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Kenny", passhash, salt, "ken019287@gmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2011, 1, 1);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Beanny", passhash, salt, "beancurd128@gmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2013, 4, 9);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Laura P", passhash, salt, "laura118@hotmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2012, 11, 22);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Oscar", passhash, salt, "oscar2345@yahoo.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2011, 9, 16);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Horatio", passhash, salt, "horatio222@gmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			testDate.set(2012, 9, 31);
+			salt = User.generateSalt();
+			passhash = User.getHash("password", salt);
+			player = new Player("Battler", passhash, salt, "battle8@hotmail.com", testDate);
+			PlayerRepository.addPlayer(player);
+			
+			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo players "+e);
 		}
 		
-		// Sample Games
+		// ----- GAMES -----
 		try {
+			
 			Game demoGame = new Game(0, "Beyond: Two Souls","Sony","M", "A psychological thriller about a girl.");
 			GameRepository.addGame(demoGame);
 			demoGame = new Game(1,"Dishonored","Bethesda","T","A sandbox assassin game.");
@@ -63,48 +121,126 @@ public class DatabasePopulator {
 			GameRepository.addGame(demoGame);
 			demoGame = new Game(5, "Warframe","Digital Extremes","T","SPACE NINJAS EVERYWHERE! WAM BLAM KAPOW!");
 			GameRepository.addGame(demoGame);
+			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo games "+e);
 		}
 		
-		// Sample Game copies
+		// ----- GAME COPIES -----
 		try {
-			Calendar now = Calendar.getInstance();
-			GameCopy demoCopy = new GameCopy("123-456-789", 0, "SWAG", now);
+			
+			Calendar testDate = Calendar.getInstance();
+			
+			testDate.set(2013, 4, 5);
+			GameCopy demoCopy = new GameCopy("aer2n-le3d2-9438d-divr3", 0, "Laura P", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
-			demoCopy = new GameCopy("111-111-111", 1, "SWAG", now);
+			
+			testDate.set(2013, 2, 12);
+			demoCopy = new GameCopy("dke9v-204k8-dine3-dien8", 3, "Beanny", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
-			demoCopy = new GameCopy("222-222-222", 2, "SWAG", now);
+			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("lyb80-09dj7-dkeaq-de9cc", 2, "John Doe", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
-			demoCopy = new GameCopy("987-654-321", 3, "SWAG", now);
+			
+			testDate.set(2013, 6, 11);
+			demoCopy = new GameCopy("m2sw0-0d9d5-pelc9-ki86d", 1, "Kenny", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
-			demoCopy = new GameCopy("333-333-333", 5, "SWAG", now);
+			
+			testDate.set(2013, 0, 1);
+			demoCopy = new GameCopy("qx09m-8bg3k-sloee-dneh8", 1, "Anthony", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
+			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo game copies "+e);
 		}
 		
-		// Sample Comments
+		// ----- COMMENTS -----
+		// TODO: Change calendar dates
 		try {
+			
 			Calendar now = Calendar.getInstance();
-			Comment demoComment = new Comment("best game evarrrrr!", "SWAG", 5, now);
+			
+			Comment demoComment = new Comment("Best game!", "Kenny", 1, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
-			demoComment = new Comment("TROLOLO", "SWAG", 5, now);
+			
+			demoComment = new Comment("Talk about a total downer.", "Laura P", 0, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
-			demoComment = new Comment("meh", "SWAG", 3, now);
+			
+			demoComment = new Comment("Okay, this is the best game of the year.  Hands down.", "John Doe", 3, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
-			demoComment = new Comment("<3 bethesda", "SWAG", 1, now);
+			
+			demoComment = new Comment("How could this game get a 5 rating?  It’s not even good.", "Beanny", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
-			demoComment = new Comment("Please stop or I will have to ban you.", "root", 5, now);
+			
+			demoComment = new Comment("Just because you don’t like a game doesn’t mean it’s bad.", "John Doe", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
+			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo comments "+e);
 		}
+		
+		// ----- CLANS -----
+		try {
+			
+			Clan demoClan = new Clan("FearNot", "Gang up and destroy the NoFear clan", "Kenny", 1);
+			ClanRepository.addClan(demoClan);
+			
+			demoClan = new Clan("NoFear", "FearNot is a pain in you know where", "Anthony", 1);
+			ClanRepository.addClan(demoClan);
+			
+			demoClan = new Clan("SpeedTicketCollector", "Power boost option available for $250,000. Interested?", "Beanny", 3);
+			ClanRepository.addClan(demoClan);
+			
+			demoClan = new Clan("Survivor", "Hungry, thirsty, no food, no weapon, no hope", "John Doe", 2);
+			ClanRepository.addClan(demoClan);
+			
+			demoClan = new Clan("MyWayOrTheHighWay", "Eat our dust", "Beanny", 3);
+			ClanRepository.addClan(demoClan);
+			
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to add demo comments "+e);
+		}
+		
+		
+		// ----- CLAN MEMBERSHIPS (IS MEMBER) -----
+		try {
+			
+			Calendar testDate = Calendar.getInstance();
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("FearNot", 1, "Kenny", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("NoFear", 1, "Anthony", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("SpeedTicketCollector", 3, "Beanny", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("Survivor", 2, "John Doe", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("MyWayOrTheHighWay", 3, "Beanny", testDate);
+			
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to add demo comments "+e);
+		}
+		
+		// ----- ACHIEVEMENTS -----
+		
+		// ----- ADMINS -----
+		
+		// ----- ARE FRIENDS -----
+		
+		// ----- ADMINISTRATES -----
+		
+		// ----- HAS EARNED -----
 		
 		System.out.println("done.");
 	}

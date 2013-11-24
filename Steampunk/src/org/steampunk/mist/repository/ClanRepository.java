@@ -279,7 +279,7 @@ public class ClanRepository {
 	 * @return nothing
 	 * @throws RepositoryErrorException
 	 */	
-	public static void addClanMember(String clanName, int gameID, String username) throws RepositoryErrorException {
+	public static void addClanMember(String clanName, int gameID, String username, Calendar memberSince) throws RepositoryErrorException {
 		/*
 		 * Set memberSince as the current date/time 
 		 * Query:

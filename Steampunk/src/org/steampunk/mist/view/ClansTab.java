@@ -2,6 +2,7 @@ package org.steampunk.mist.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -17,10 +18,10 @@ import javax.swing.event.ListSelectionListener;
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Clan;
 import org.steampunk.mist.repository.ClanRepository;
-import org.steampunk.mist.repository.UserRepository;
 import org.steampunk.mist.repository.ClanRepository.ClanNameGameIdPair;
 import org.steampunk.mist.repository.ClanRepository.ClanNotFoundException;
 import org.steampunk.mist.repository.RepositoryErrorException;
+import org.steampunk.mist.repository.UserRepository;
 
 public class ClansTab extends JPanel implements ListSelectionListener {
 	
@@ -229,7 +230,7 @@ public class ClansTab extends JPanel implements ListSelectionListener {
 			} else if (ClanRepository.checkMembership(clanName, gameID, newMember) == true){
 				JOptionPane.showMessageDialog(this, "That user is already a member of this clan!");
 			} else {
-				ClanRepository.addClanMember(clanName, gameID, newMember);
+				ClanRepository.addClanMember(clanName, gameID, newMember, Calendar.getInstance());
 			}
 		} catch (RepositoryErrorException e) {
 			System.err.println(e);
