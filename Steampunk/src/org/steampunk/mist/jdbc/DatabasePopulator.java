@@ -2,12 +2,14 @@ package org.steampunk.mist.jdbc;
 
 import java.util.Calendar;
 
+import org.steampunk.mist.model.Achievement;
 import org.steampunk.mist.model.Admin;
 import org.steampunk.mist.model.Comment;
 import org.steampunk.mist.model.Game;
 import org.steampunk.mist.model.GameCopy;
 import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.AchievementRepository;
 import org.steampunk.mist.repository.AdminRepository;
 import org.steampunk.mist.repository.CommentRepository;
 import org.steampunk.mist.repository.GameCopyRepository;
@@ -80,8 +82,29 @@ public class DatabasePopulator {
 			GameCopyRepository.addGameCopy(demoCopy);
 			demoCopy = new GameCopy("333-333-333", 5, "SWAG", now);
 			GameCopyRepository.addGameCopy(demoCopy);
+			demoCopy = new GameCopy("333-333-334", 5, null, null);
+			GameCopyRepository.addGameCopy(demoCopy);
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo game copies "+e);
+		}
+		
+		// Sample Achievements
+		// Sample earned achievements
+		try {
+			Achievement demoAch = new Achievement(5, "New frame!", "Built a new frame", 5);
+			AchievementRepository.addAchievement(demoAch);
+			demoAch = new Achievement(5, "Blacksmith", "Built something in the foundry", 5);
+			AchievementRepository.addAchievement(demoAch);
+			demoAch = new Achievement(5, "Dedicated", "Joined a clan", 5);
+			AchievementRepository.addAchievement(demoAch);
+			demoAch = new Achievement(25, "For profit!", "Killed Alad V.", 5);
+			AchievementRepository.addAchievement(demoAch);
+			AchievementRepository.earnAchievement(demoAch, "SWAG");
+			demoAch = new Achievement(5, "Trollban", "Made 10 bounce pads at once", 5);
+			AchievementRepository.addAchievement(demoAch);
+			AchievementRepository.earnAchievement(demoAch, "SWAG");
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to add demo achievements"+e);
 		}
 		
 		// Sample Comments

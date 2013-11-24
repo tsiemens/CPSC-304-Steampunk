@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Player;
@@ -18,11 +20,13 @@ import org.steampunk.mist.model.Player;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class Mist extends JFrame{
+public class Mist extends JFrame implements ChangeListener{
 
 	private static final long serialVersionUID = 234794033610547082L;
 	
 	private JTabbedPane tabbedPane;
+	
+	private GameLibraryTab mGameLibTab;
 
 	/**
 	 * Create the application.
@@ -41,6 +45,7 @@ public class Mist extends JFrame{
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.addChangeListener(this);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -96,7 +101,8 @@ public class Mist extends JFrame{
 		if (AccountManager.getInstance().getCurrentUser() instanceof Player) {
 			// Player tabs
 			addTab("Store", null, new StoreTab(), null);
-			addTab("Game Library", null, new GameLibraryTab(), null);
+			mGameLibTab = new GameLibraryTab();
+			addTab("Game Library", null, mGameLibTab, null);
 			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 				new UserDetailsTab(), null);
 			addTab("Friends", null, new FriendsTab(), null);
@@ -107,6 +113,12 @@ public class Mist extends JFrame{
 					new UserDetailsTab(), null);
 			addTab("Users", null, new SystemAdminUsersTab(), null);
 		}
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent arg0) {
+		if (mGameLibTab != null)
+				mGameLibTab.refreshGameList();
 	}
 }
 

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
@@ -89,6 +90,7 @@ public class GameDetailsPanel extends JPanel {
 		mCreateClanButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				// TODO
 				System.out.println("implement (create clan)");	
 			}
 		});
@@ -98,7 +100,20 @@ public class GameDetailsPanel extends JPanel {
 		mBuyButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("implement (buy)");	
+				try {
+					if (GameCopyRepository.purchaseCopyOfGame(mGame.getGameID(),
+							AccountManager.getInstance().getCurrentUser().getUsername())) {
+						GameDetailsPanel.this.updateGameInfo();
+					} else {
+						JOptionPane.showMessageDialog(GameDetailsPanel.this, "No copies left for this game.", "Error: Could not buy game",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (RepositoryErrorException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(GameDetailsPanel.this, "Unknown database error occurred", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		
@@ -127,6 +142,7 @@ public class GameDetailsPanel extends JPanel {
 		mEditDescButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				// TODO
 				System.out.println("implement (edit desc)");	
 			}
 		});
@@ -150,6 +166,7 @@ public class GameDetailsPanel extends JPanel {
 		mEditRatingButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				// TODO
 				System.out.println("implement (edit rating)");	
 			}
 		});
@@ -170,6 +187,7 @@ public class GameDetailsPanel extends JPanel {
 		mEditPubButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				// TODO
 				System.out.println("implement (edit pub)");	
 			}
 		});
@@ -245,6 +263,8 @@ public class GameDetailsPanel extends JPanel {
 			} catch (RepositoryErrorException e) {
 				System.err.println(e.toString());
 			}
+			
+			mAchievementsPanel.setGame(mGame.getGameID());
 		}
 	}
 }

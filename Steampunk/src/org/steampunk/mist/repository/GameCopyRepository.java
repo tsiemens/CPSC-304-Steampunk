@@ -173,18 +173,42 @@ public class GameCopyRepository {
 		}
 	}
 	
-	public static void updateOwner(String gameKey, String username) throws RepositoryErrorException
-	{
-		updateField(gameKey, FIELD_OWNER, username);
+	public static boolean purchaseCopyOfGame(int gameID, String username) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT "+FIELD_GAMEKEY
+				+" FROM "+DatabaseSchema.TABLE_NAME_GAME_COPIES
+				+" WHERE "+FIELD_GAMEID+" = ?"
+				+" AND "+FIELD_PURCHASE_DATE+" IS NULL", gameID);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			while (rs.next()){
+				if (purchaseCopy(rs.getString(FIELD_GAMEKEY), username)) {
+					// Successfully purchased the game
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading game copy data: "+e);
+		}
 	}
 	
-	private static void updateField(String gameKey, String field, Object newVal) throws RepositoryErrorException
+	public static boolean purchaseCopy(String gameKey, String username) throws RepositoryErrorException
 	{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
-			dbm.updatePrepared("UPDATE "+DatabaseSchema.TABLE_NAME_GAME_COPIES
-				+" SET "+field+" = ?"
-				+" WHERE gameKey = ?", newVal, gameKey);
+			int rowcount = dbm.updatePrepared("UPDATE "+DatabaseSchema.TABLE_NAME_GAME_COPIES
+				+" SET "+FIELD_OWNER+" = ?"
+				+", "+FIELD_PURCHASE_DATE+" = ?"
+				+" WHERE gameKey = ?"
+				+" AND "+FIELD_PURCHASE_DATE+" IS NULL", username, 
+				new Date(Calendar.getInstance().getTimeInMillis()), gameKey);
+			return rowcount == 1?true:false;
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
@@ -193,9 +217,14 @@ public class GameCopyRepository {
 	public static void addGameCopy(GameCopy copy) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
-			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_GAME_COPIES +"(gameKey, gameID, ownerUsername, purchaseDate)"
-					+" VALUES(?, ?, ?, ?)", copy.getGameKey(), copy.getGameID(), copy.getOwnerUsername(),
-					new Date(copy.getPurchaseDate().getTimeInMillis()));
+			if (copy.getPurchaseDate() != null) {
+				dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_GAME_COPIES +"(gameKey, gameID, ownerUsername, purchaseDate)"
+						+" VALUES(?, ?, ?, ?)", copy.getGameKey(), copy.getGameID(), copy.getOwnerUsername(),
+						new Date(copy.getPurchaseDate().getTimeInMillis()));
+			} else {
+				dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_GAME_COPIES +"(gameKey, gameID)"
+						+" VALUES(?, ?)", copy.getGameKey(), copy.getGameID());
+			}
 		} catch (SQLException e) {
 			throw new RepositoryErrorException(e.getMessage());
 		}

@@ -3,7 +3,6 @@ package org.steampunk.mist.model;
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.repository.AchievementRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
-import org.steampunk.mist.util.MistTextFormatter;
 
 public class Achievement {
 
