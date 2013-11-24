@@ -224,6 +224,28 @@ public class GameRepository {
 		}
 	}
 	
+	public static boolean gameAdminedByUser(String username, int gameID) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT gameID"
+					+" FROM "+DatabaseSchema.TABLE_NAME_ADMINISTRATES
+					+" WHERE username = ?", username);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+
+		try{
+			if (rs.next()){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading admin data: "+e);
+		}
+	}
+	
 	public static class GameNotFoundException extends Exception{	
 		
 		private static final long serialVersionUID = -4327940496520103396L;

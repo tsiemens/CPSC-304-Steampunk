@@ -98,12 +98,25 @@ public class AchievementRepository {
 		}
 	}
 	
-	protected static void addAchievement(Achievement achievement) throws RepositoryErrorException{
+	public static void addAchievement(Achievement achievement) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {
-			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_ACHIEVEMENTS +"(achievmentName, achievementDesc, gameID, points)"
-					+" VALUES(?, ?, ?, ?, ?)", achievement.getAchievementName() , achievement.getAchievementDesc(), achievement.getGameID(),
+			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_ACHIEVEMENTS +"("+FIELD_ACHIEVEMENT_NAME+
+					", "+FIELD_ACHIEVEMENT_DESCRIPTION+", "+FIELD_GAME_ID+", "+FIELD_POINTS+")"
+					+" VALUES(?, ?, ?, ?)", achievement.getAchievementName() , achievement.getAchievementDesc(), achievement.getGameID(),
 					achievement.getPoints());
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+	}
+	
+	public static void earnAchievement(Achievement achievement, String username) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_HAS_EARNED +"("+FIELD_ACHIEVEMENT_NAME+", "
+					+FIELD_GAME_ID+", "+FIELD_USERNAME+")"
+					+" VALUES(?, ?, ?)", achievement.getAchievementName() , achievement.getGameID(),
+					username);
 		} catch (SQLException e) {
 			throw new RepositoryErrorException(e.getMessage());
 		}
@@ -185,18 +198,19 @@ public class AchievementRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT username, gameID, achievementName"
+			rs = dbm.queryPrepared("SELECT gameID, achievementName"
 				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
 				+" WHERE username = ?", username);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
 		
-		Achievement achievement = new Achievement();
+		Achievement achievement;
 		
 		try{
 			while (rs.next()){
-				setAchievementData(Integer.parseInt(rs.getString(FIELD_GAME_ID)), rs.getString(FIELD_ACHIEVEMENT_NAME), achievement);
+				achievement = new Achievement();
+				setAchievementData(rs.getInt(FIELD_GAME_ID), rs.getString(FIELD_ACHIEVEMENT_NAME), achievement);
 				achievementList.add(achievement);
 			}
 		} catch (SQLException e) {
@@ -229,11 +243,12 @@ public class AchievementRepository {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
 		
-		Achievement achievement = new Achievement();
+		Achievement achievement;
 		
 		try{
 			while (rs.next()){
-				setAchievementData(Integer.parseInt(rs.getString(FIELD_GAME_ID)), rs.getString(FIELD_ACHIEVEMENT_NAME), achievement);
+				achievement = new Achievement();
+				setAchievementData(rs.getInt(FIELD_GAME_ID), rs.getString(FIELD_ACHIEVEMENT_NAME), achievement);
 				achievementList.add(achievement);
 			}
 		} catch (SQLException e) {
@@ -255,8 +270,8 @@ public class AchievementRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT username, gameID, achievementName"
-				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
+			rs = dbm.queryPrepared("SELECT gameID, achievementName, achievementDesc, points"
+				+" FROM "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS
 				+" WHERE gameID = ?", gameID);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
@@ -266,7 +281,8 @@ public class AchievementRepository {
 		
 		try{
 			while (rs.next()){
-				setAchievementData(Integer.parseInt(rs.getString(FIELD_GAME_ID)), rs.getString(FIELD_ACHIEVEMENT_NAME), achievement);
+				achievement = new Achievement(rs.getInt(FIELD_POINTS), rs.getString(FIELD_ACHIEVEMENT_NAME),
+						rs.getString(FIELD_ACHIEVEMENT_DESCRIPTION), rs.getInt(FIELD_GAME_ID));
 				achievementList.add(achievement);
 			}
 		} catch (SQLException e) {
@@ -352,6 +368,37 @@ public class AchievementRepository {
 		}
 		
 		return sum;
+	}
+	
+	public static boolean playerHasEarnedAchievement(Achievement achmt, String username) 
+			throws RepositoryErrorException {
+		if (username == null){
+			return false;
+		}
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT a."+FIELD_ACHIEVEMENT_NAME
+				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED+" he"
+				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+" a"
+				+" WHERE he.gameID = a.gameID"
+				+" AND a.achievementName = he.achievementName"
+				+" AND a.gameID = ?"
+				+" AND he.username = ?"
+				+" AND a.achievementName = ?", achmt.getGameID(), username,
+				achmt.getAchievementName());
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		try{
+			if(rs.next()){
+				return true;
+			}
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading achievement data: "+e);
+		}
+		return false;
 	}
 
 }

@@ -29,7 +29,7 @@ public class DatabaseSchema {
 	public static final String CREATE_TABLE_ACHIEVEMENTS =	
 		"CREATE TABLE " + TABLE_NAME_ACHIEVEMENTS
 		+" (achievementName VARCHAR(50),"
-		+" achievementDescription VARCHAR(140),"
+		+" achievementDesc VARCHAR(140),"
 		+" gameID INTEGER NOT NULL,"
 		+" points INTEGER,"
 		+" PRIMARY KEY (achievementName, gameID),"

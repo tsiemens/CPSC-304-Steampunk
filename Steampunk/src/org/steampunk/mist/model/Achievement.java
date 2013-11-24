@@ -1,5 +1,9 @@
 package org.steampunk.mist.model;
 
+import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.repository.AchievementRepository;
+import org.steampunk.mist.repository.RepositoryErrorException;
+
 public class Achievement {
 
 	private int mPoints;
@@ -53,4 +57,21 @@ public class Achievement {
 		mGameID = gameID;
 	}
 	
+	@Override
+	public String toString() {
+		String returnString = this.getAchievementName();
+		User cUser = AccountManager.getInstance().getCurrentUser();
+		if (cUser instanceof Player) {
+			try {
+				boolean hasEarned = AchievementRepository.playerHasEarnedAchievement(this,
+						cUser.getUsername());
+				if (hasEarned) {
+					returnString = returnString+" [Earned]";
+				}
+			} catch (RepositoryErrorException e) {
+				e.printStackTrace();
+			}
+		}
+		return returnString;
+	}
 }
