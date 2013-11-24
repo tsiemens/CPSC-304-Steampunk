@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Vector;
 
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
@@ -229,9 +230,46 @@ public class GameCopyRepository {
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
-	
+
+	public static void addGameAdministered(String username, int gameID) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("INSERT INTO " + DatabaseSchema.TABLE_NAME_ADMINISTRATES +"(username, gameID)"
+					+" VALUES(?, ?)", username, gameID);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+	}
+
+
+	// still not done
+	public static Vector<String> getGameAdministered(String username) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT gameID"
+					+" FROM "+DatabaseSchema.TABLE_NAME_ADMINISTRATES
+					+" WHERE username = ?", username);
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+
+		Vector<String> gameNames = new Vector<String>();
+
+		try{
+			while (rs.next()){
+				gameNames.add(rs.getString(1));
+
+			}
+
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading player data: "+e);
+		}
+		return gameNames;
+	}
+
 	public static class GameCopyNotFoundException extends Exception{	
-		
+
 		private static final long serialVersionUID = -4327940496520103396L;
 
 		GameCopyNotFoundException(String reason) {

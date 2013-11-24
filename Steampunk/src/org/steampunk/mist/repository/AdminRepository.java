@@ -97,4 +97,27 @@ public class AdminRepository extends UserRepository{
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
+	
+	public static int getAdminPermissionTier(String adminName) throws RepositoryErrorException{
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT permissionTier"
+				+" FROM "+DatabaseSchema.TABLE_NAME_ADMINS
+				+" WHERE username = ?", adminName);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		} 
+		
+		int permissionTier = 0;
+		
+		try {
+			if (rs.next()){
+				permissionTier = (rs.getInt("permissionTier"));
+			} 
+		} catch (SQLException e) {
+			throw new RepositoryErrorException("Error reading admins data: "+e);
+		}
+		return permissionTier;
+	}
 }

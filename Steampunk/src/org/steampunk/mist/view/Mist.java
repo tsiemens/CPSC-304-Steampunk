@@ -1,30 +1,32 @@
 package org.steampunk.mist.view;
 
-import javax.swing.JFrame;
-
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JDialog;
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import javax.swing.JMenuBar;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Player;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.RepositoryErrorException;
 
 public class Mist extends JFrame implements ChangeListener{
 
 	private static final long serialVersionUID = 234794033610547082L;
 	
 	private JTabbedPane tabbedPane;
+	private String username;
+	private int permissionTier;
 	
 	private GameLibraryTab mGameLibTab;
 
@@ -105,20 +107,36 @@ public class Mist extends JFrame implements ChangeListener{
 			addTab("Game Library", null, mGameLibTab, null);
 			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 				new UserDetailsTab(), null);
+			addTab("Clans", null, new ClansTab(), null);
 			addTab("Friends", null, new FriendsTab(), null);
 			tabbedPane.setSelectedIndex(1);
 		} else {
 			// Admin tabs
-			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
-					new UserDetailsTab(), null);
-			addTab("Users", null, new SystemAdminUsersTab(), null);
+			username= AccountManager.getInstance().getCurrentUser().getUsername();
+			try {
+				permissionTier = AdminRepository.getAdminPermissionTier(username);
+			} catch (RepositoryErrorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (permissionTier == 0) {
+				addTab(username, null, new UserDetailsTab(), null);
+				addTab("Users", null, new SystemAdminUsersTab(), null);
+				addTab("Games", null, new GameAdminTab(), null);
+			}
+			if (permissionTier == 2) {
+				addTab(username, null, new UserDetailsTab(), null);
+
+				addTab("Games", null, new GameAdminTab(), null);
+			}
+
 		}
 	}
-
+	
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		if (mGameLibTab != null)
 				mGameLibTab.refreshGameList();
 	}
 }
-

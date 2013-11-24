@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import org.steampunk.mist.AccountManager;
@@ -29,8 +30,10 @@ import java.awt.FlowLayout;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-public class FriendsTab extends JPanel {
+public class FriendsTab extends JPanel implements ListSelectionListener {
 	
 	private static final long serialVersionUID = 8436157125343804361L;
 	
@@ -69,6 +72,9 @@ public class FriendsTab extends JPanel {
 		panel.add(scrollPane, gbc_scrollPane);
 		
 		mFriendsList = new JList<String>();
+		mFriendsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		mFriendsList.addListSelectionListener(this);
+		
 		scrollPane.setViewportView(mFriendsList);
 		refreshFriendsList();
 		
@@ -159,7 +165,7 @@ public class FriendsTab extends JPanel {
 	
 	private void removeFriend(){		
 
-		String invitee = txtPlayerName.getText();	
+		String invitee = txtPlayerName.getText();
 
 		try {
 			// check if the invitee exist
@@ -187,6 +193,16 @@ public class FriendsTab extends JPanel {
 		}
 		
 
+		
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		// TODO Auto-generated method stub
+		if (!e.getValueIsAdjusting()){
+			txtPlayerName.setText(mFriends.get(mFriendsList.getSelectedIndex()));
+			
+		}
 		
 	}
 
