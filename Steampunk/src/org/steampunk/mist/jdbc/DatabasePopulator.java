@@ -27,8 +27,8 @@ public class DatabasePopulator {
 		byte[] salt = User.generateSalt();
 		byte[] passhash = User.getHash("root", salt);
 		byte[] passhash2 = User.getHash("admin", salt);
-		Admin admin = new Admin(Admin.ADMIN_TIER_ROOT, "root", passhash, salt, "root@root", Calendar.getInstance());
-		Admin adminGame = new Admin(Admin.ADMIN_TIER_GAME_MOD, "tier1admin", passhash2, salt, "tier1@admin", Calendar.getInstance());
+		Admin admin = new Admin(Admin.ADMIN_TIER_ROOT, "root", passhash, salt, "root@root.root", Calendar.getInstance());
+		Admin adminGame = new Admin(Admin.ADMIN_TIER_GAME_MOD, "tier1admin", passhash2, salt, "tier1@admin.admin", Calendar.getInstance());
 		try {
 			AdminRepository.addAdmin(admin);
 			AdminRepository.addAdmin(adminGame);
@@ -176,11 +176,11 @@ public class DatabasePopulator {
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
-			demoComment = new Comment("How could this game get a 5 rating?  It’s not even good.", "Beanny", 2, now);
+			demoComment = new Comment("How could this game get a 5 rating?  Itï¿½s not even good.", "Beanny", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
-			demoComment = new Comment("Just because you don’t like a game doesn’t mean it’s bad.", "John Doe", 2, now);
+			demoComment = new Comment("Just because you donï¿½t like a game doesnï¿½t mean itï¿½s bad.", "John Doe", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			

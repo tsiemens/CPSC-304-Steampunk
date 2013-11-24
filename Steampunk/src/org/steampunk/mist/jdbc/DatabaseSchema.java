@@ -43,7 +43,8 @@ public class DatabaseSchema {
 		+"passSalt RAW(8) NOT NULL,"
 		+"email VARCHAR(50) UNIQUE NOT NULL,"
 		+"dateJoined DATE,"
-		+"PRIMARY KEY (username))";
+		+"PRIMARY KEY (username),"
+		+"CONSTRAINT email_constraint CHECK(email LIKE '%@%.%'))";
 	
 	public static final String CREATE_TABLE_PLAYERS =
 		"CREATE TABLE " + TABLE_NAME_PLAYERS
