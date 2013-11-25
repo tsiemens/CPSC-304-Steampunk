@@ -12,7 +12,7 @@ import org.steampunk.mist.model.Achievement;
 public class AchievementRepository {
 
 	public static final String FIELD_ACHIEVEMENT_NAME = "achievementName";			//Primary Key
-	public static final String FIELD_ACHIEVEMENT_DESCRIPTION = "achievementDesc";
+	public static final String FIELD_ACHIEVEMENT_DESCRIPTION = "achievementDescription";
 	public static final String FIELD_GAME_ID = "gameID";							//Primary Key
 	public static final String FIELD_POINTS = "points";
 		
@@ -270,7 +270,7 @@ public class AchievementRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT gameID, achievementName, achievementDesc, points"
+			rs = dbm.queryPrepared("SELECT gameID, achievementName, achievementDescription, points"
 				+" FROM "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS
 				+" WHERE gameID = ?", gameID);
 		} catch (SQLException e) {
@@ -306,12 +306,12 @@ public class AchievementRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT SUM(points) AS sum"
-				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
-				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS
+			rs = dbm.queryPrepared("SELECT SUM(a.points) AS sum"
+				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED+" he"
+				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+" a"
 				+" WHERE username = ?"
-				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".gameID = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".gameID"
-				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".achievementName = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".achievementName", username);
+				+" AND he.gameID = a.gameID"
+				+" AND he.achievementName = a.achievementName", username);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
@@ -320,7 +320,7 @@ public class AchievementRepository {
 		
 		try{
 			if(rs.next()){
-				sum = rs.getInt(0);
+				sum = rs.getInt("sum");
 			}
 		} catch (SQLException e) {
 			throw new RepositoryErrorException("Error reading user data: "+e);
@@ -346,13 +346,13 @@ public class AchievementRepository {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT SUM(points) AS sum"
-				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED
-				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS
+			rs = dbm.queryPrepared("SELECT SUM(a.points) AS sum"
+				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED+" he"
+				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+" a"
 				+" WHERE username = ?"
 				+" AND gameID = ?"
-				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".gameID = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".gameID"
-				+" AND "+DatabaseSchema.TABLE_NAME_HAS_EARNED+".achievementName = "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+".achievementName", username, gameID);
+				+" AND he.gameID = a.gameID"
+				+" AND he."+FIELD_ACHIEVEMENT_NAME+" = a."+FIELD_ACHIEVEMENT_NAME, username, gameID);
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
 		}
@@ -361,7 +361,7 @@ public class AchievementRepository {
 		
 		try{
 			if(rs.next()){
-				sum = rs.getInt(0);
+				sum = rs.getInt("sum");
 			}
 		} catch (SQLException e) {
 			throw new RepositoryErrorException("Error reading user data: "+e);
@@ -381,11 +381,11 @@ public class AchievementRepository {
 			rs = dbm.queryPrepared("SELECT a."+FIELD_ACHIEVEMENT_NAME
 				+" FROM "+DatabaseSchema.TABLE_NAME_HAS_EARNED+" he"
 				+", "+DatabaseSchema.TABLE_NAME_ACHIEVEMENTS+" a"
-				+" WHERE he.gameID = a.gameID"
-				+" AND a.achievementName = he.achievementName"
-				+" AND a.gameID = ?"
-				+" AND he.username = ?"
-				+" AND a.achievementName = ?", achmt.getGameID(), username,
+				+" WHERE he."+FIELD_GAME_ID+" = a."+FIELD_GAME_ID
+				+" AND a."+FIELD_ACHIEVEMENT_NAME+" = he."+FIELD_ACHIEVEMENT_NAME
+				+" AND a."+FIELD_GAME_ID+" = ?"
+				+" AND he."+FIELD_USERNAME+" = ?"
+				+" AND a."+FIELD_ACHIEVEMENT_NAME+" = ?", achmt.getGameID(), username,
 				achmt.getAchievementName());
 		} catch (SQLException e) {
 			 throw new RepositoryErrorException(e.getMessage());
