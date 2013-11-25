@@ -5,7 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.AchievementRepository;
+import org.steampunk.mist.repository.AchievementRepository.AchievementNotFoundException;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
 import org.steampunk.mist.util.MistTextFormatter;
@@ -31,6 +34,8 @@ public class UserDetailsTab extends JPanel {
 	JLabel mJoinedLabel;
 	private JButton mChangeEmailButton;
 	private JButton mChangePassButton;
+	private JLabel mAchievementTotalTitle;
+	private JLabel mAchievementTotal;
 	
 	/**
 	 * Create the panel.
@@ -96,6 +101,20 @@ public class UserDetailsTab extends JPanel {
 		gbc_mJoinedLabel.gridy = 1;
 		panel.add(mJoinedLabel, gbc_mJoinedLabel);
 		
+		mAchievementTotalTitle = new JLabel("Total Achievement Points:");
+		GridBagConstraints gbc_AchievementTotalTitle = new GridBagConstraints();
+		gbc_AchievementTotalTitle.insets = new Insets(0, 0, 5, 5);
+		gbc_AchievementTotalTitle.gridx = 0;
+		gbc_AchievementTotalTitle.gridy = 2;
+		panel.add(mAchievementTotalTitle, gbc_AchievementTotalTitle);
+		
+		mAchievementTotal = new JLabel("0");
+		GridBagConstraints gbc_AchievementTotal = new GridBagConstraints();
+		gbc_AchievementTotal.insets = new Insets(0, 0, 5, 5);
+		gbc_AchievementTotal.gridx = 1;
+		gbc_AchievementTotal.gridy = 2;
+		panel.add(mAchievementTotal, gbc_AchievementTotal);
+		
 		mChangePassButton = new JButton("Change password");
 		GridBagConstraints gbc_mChangePassButton = new GridBagConstraints();
 		gbc_mChangePassButton.gridx = 3;
@@ -119,6 +138,20 @@ public class UserDetailsTab extends JPanel {
 		mEmailLabel.setText(currentUser.getEmail());
 		Calendar dj = currentUser.getDateJoined();
 		mJoinedLabel.setText(MistTextFormatter.formatDateString(dj));
+		
+		if (currentUser instanceof Player) {
+			mAchievementTotal.setVisible(true);
+			mAchievementTotalTitle.setVisible(true);
+			try {
+				mAchievementTotal.setText(""+AchievementRepository.sumPlayerAchievementPoints(currentUser.getUsername()));
+			} catch (Exception e) {
+				mAchievementTotal.setText("--");
+				e.printStackTrace();
+			}
+		} else {
+			mAchievementTotal.setVisible(false);
+			mAchievementTotalTitle.setVisible(false);
+		}
 	}
 	
 	private void showChangeEmailDialog()

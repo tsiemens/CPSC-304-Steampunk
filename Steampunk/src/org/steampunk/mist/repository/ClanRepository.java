@@ -608,7 +608,16 @@ public class ClanRepository {
 		
 		@Override
 		public String toString() {
-			return clanName + " (" + gameID + " )";
+			
+			try {
+				return clanName + " (" + GameRepository.getGameName(gameID) + " )";
+			} catch (RepositoryErrorException e) {
+				e.printStackTrace();
+			} catch (GameNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			return "";
 		}
 	}
 	

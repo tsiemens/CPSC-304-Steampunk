@@ -20,6 +20,7 @@ import org.steampunk.mist.model.Clan;
 import org.steampunk.mist.repository.ClanRepository;
 import org.steampunk.mist.repository.ClanRepository.ClanNameGameIdPair;
 import org.steampunk.mist.repository.ClanRepository.ClanNotFoundException;
+import org.steampunk.mist.repository.GameCopyRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
 
@@ -229,6 +230,8 @@ public class ClansTab extends JPanel implements ListSelectionListener {
 				JOptionPane.showMessageDialog(this, "That user does not exist.");
 			} else if (ClanRepository.checkMembership(clanName, gameID, newMember) == true){
 				JOptionPane.showMessageDialog(this, "That user is already a member of this clan!");
+			} else if (GameCopyRepository.userOwnsGame(newMember, gameID) == false) {
+				JOptionPane.showMessageDialog(this, "That user does not own that game!");
 			} else {
 				ClanRepository.addClanMember(clanName, gameID, newMember, Calendar.getInstance());
 			}
