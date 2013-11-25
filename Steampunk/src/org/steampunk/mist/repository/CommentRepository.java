@@ -78,4 +78,74 @@ public class CommentRepository {
 			throw new RepositoryErrorException(e.getMessage());
 		}
 	}
+
+	public static String getAverageLength(String adminName) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT AVG(" + DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ".length)"
+				+ " FROM "+ DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ", " + DatabaseSchema.TABLE_NAME_ADMINISTRATES + " adm"
+				+ " WHERE adm.gameID = " + DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ".gameID AND adm.username = ?", adminName);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		String result = null;
+		try {
+			if (rs.next()){
+				result = Float.toString(rs.getFloat(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public static String getMinLength(String adminName) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT MIN(" + DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ".length)"
+				+ " FROM "+ DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ", " + DatabaseSchema.TABLE_NAME_ADMINISTRATES + " adm"
+				+ " WHERE adm.gameID = " + DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ".gameID AND adm.username = ?", adminName);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		String result = null;
+		try {
+			if (rs.next()){
+				result = Float.toString(rs.getFloat(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public static String getMaxLength(String adminName) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		ResultSet rs;
+		try {
+			rs = dbm.queryPrepared("SELECT MAX(" + DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ".length)"
+				+ " FROM "+ DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ", " + DatabaseSchema.TABLE_NAME_ADMINISTRATES + " adm"
+				+ " WHERE adm.gameID = " + DatabaseSchema.VIEW_NAME_AVERAGE_COMMENT_LENGTH + ".gameID AND adm.username = ?", adminName);
+		} catch (SQLException e) {
+			 throw new RepositoryErrorException(e.getMessage());
+		}
+		
+		String result = null;
+		try {
+			if (rs.next()){
+				result = Float.toString(rs.getFloat(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 }

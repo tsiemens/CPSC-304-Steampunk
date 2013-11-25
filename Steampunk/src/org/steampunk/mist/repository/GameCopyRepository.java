@@ -243,7 +243,7 @@ public class GameCopyRepository {
 	}
 
 
-	// still not done
+	// to get the name of games being administered
 	public static Vector<String> getGameAdministered(String adminName) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
