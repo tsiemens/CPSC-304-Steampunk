@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.AdminRepository;
+import org.steampunk.mist.repository.GameCopyRepository;
 import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
@@ -82,7 +83,7 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 				
 				JScrollPane scrollPane = new JScrollPane();
 				panel.add(scrollPane);
-				scrollPane.setPreferredSize(new Dimension(140, 230));
+				scrollPane.setPreferredSize(new Dimension(250, 230));
 				
 				mGamesList = new JList<String>();
 				mGamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -125,7 +126,7 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 
 	private void refreshGamesList() {
 		try {
-			mGamesAdministered = PlayerRepository.getFriends(administrator);/// not done ///
+			mGamesAdministered = GameCopyRepository.getGameAdministered(administrator);
 			mGamesList.setListData(mGamesAdministered);
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to get games "+e);
