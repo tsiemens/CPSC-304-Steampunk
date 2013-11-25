@@ -44,6 +44,7 @@ public class ClanDetailsPanel extends JPanel{
 		add(lblMessageOfThe);
 		
 		mClanMoDTextArea = new JTextArea();
+		mClanMoDTextArea.setEditable(false);
 		mClanMoDTextArea.setText("<MessageOfTheDay>");
 		mClanMoDTextArea.setBounds(10, 54, 248, 87);
 		add(mClanMoDTextArea);

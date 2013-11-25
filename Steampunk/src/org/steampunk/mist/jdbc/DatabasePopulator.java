@@ -179,6 +179,10 @@ public class DatabasePopulator {
 			demoCopy = new GameCopy("eyb80-09dj7-dkeaq-de9cc", 5, "Anthony", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
 			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("fyb80-09dj7-dkeaq-de9cc", 3, "Kenny", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
 			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo game copies "+e);
@@ -264,6 +268,12 @@ public class DatabasePopulator {
 			
 			testDate.set(2013, 5, 28);
 			ClanRepository.addClanMember("FearNot", 1, "Anthony", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("Survivor", 2, "Kenny", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("MyWayOrTheHighWay", 3, "Kenny", testDate);
 			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add administrates "+e);
