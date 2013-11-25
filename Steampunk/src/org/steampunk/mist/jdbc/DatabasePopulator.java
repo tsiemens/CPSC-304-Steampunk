@@ -290,7 +290,7 @@ public class DatabasePopulator {
 		}
 		
 		// ----- ACHIEVEMENTS -----
-		// ----- HAS EARNED -----
+
 		try {
 			Achievement demoAch = new Achievement(5, "New frame!", "Built a new frame", 5);
 			AchievementRepository.addAchievement(demoAch);
@@ -308,25 +308,57 @@ public class DatabasePopulator {
 			System.err.println("Failed to add demo achievements"+e);
 		}
 		
-		// ----- ADMINS -----
 		
 		// ----- ARE FRIENDS -----
 		
-		// ----- ADMINISTRATES -----
-		
 		try {
 			
-			GameCopyRepository.addGameAdministered("tier1admin", 1);
+			PlayerRepository.addFriend("John Doe", "Anthony");
+			PlayerRepository.addFriend("John Doe", "Kenny");
+			PlayerRepository.addFriend("John Doe", "Beanny");
+			PlayerRepository.addFriend("John Doe", "Laura P");
+			PlayerRepository.addFriend("John Doe", "Oscar");
+			PlayerRepository.addFriend("Kenny", "Battler");
+			PlayerRepository.addFriend("Kenny", "Anthony");
+			PlayerRepository.addFriend("Kenny", "Laura P");
+			PlayerRepository.addFriend("Anthony", "Battler");
+			PlayerRepository.addFriend("Anthony", "Beanny");
+			PlayerRepository.addFriend("Anthony", "Horatio");
+			PlayerRepository.addFriend("Anthony", "John Doe");
+			PlayerRepository.addFriend("Beanny", "John Doe");
+			PlayerRepository.addFriend("Beanny", "Laura P");
+			PlayerRepository.addFriend("Beanny", "Oscar");
+			PlayerRepository.addFriend("Laura P", "Horatio");
+			PlayerRepository.addFriend("Laura P", "Battler");
+			PlayerRepository.addFriend("Laura P", "Anthony");
+			PlayerRepository.addFriend("Laura P", "John Doe");
+			PlayerRepository.addFriend("Oscar", "John Doe");
+			PlayerRepository.addFriend("Horatio", "Anthony");
+			PlayerRepository.addFriend("Horatio", "Battler");
+			PlayerRepository.addFriend("Horatio", "Beanny");
+			PlayerRepository.addFriend("Battler", "John Doe");
+			PlayerRepository.addFriend("Battler", "Laura P");
+			PlayerRepository.addFriend("Battler", "Horatio");
 			
-			GameCopyRepository.addGameAdministered("tier1admin", 2);
 			
-			GameCopyRepository.addGameAdministered("tier1admin", 3);
+
 			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo comments "+e);
 		}
 		
-		// ----- HAS EARNED -----
+		// ----- ADMINISTRATES -----
+		
+		try {
+			
+			GameCopyRepository.addGameAdministered("tier1admin", 1);			
+			GameCopyRepository.addGameAdministered("tier1admin", 2);			
+			GameCopyRepository.addGameAdministered("tier1admin", 3);
+			
+		} catch (RepositoryErrorException e) {
+			System.err.println("Failed to add demo comments "+e);
+		}
+
 		
 		System.out.println("done.");
 	}
