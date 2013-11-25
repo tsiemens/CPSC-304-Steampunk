@@ -53,6 +53,8 @@ public class CommentRepository {
 		return comments;
 	}
 	
+	
+	
 	public static void addComment(Comment comment) throws RepositoryErrorException {
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		try {

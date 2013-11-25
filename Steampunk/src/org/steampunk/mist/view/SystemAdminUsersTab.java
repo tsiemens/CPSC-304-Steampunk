@@ -228,7 +228,7 @@ public class SystemAdminUsersTab extends JPanel {
 			admin.setPassword(userVector.elementAt(1));
 			admin.setEmail(userVector.elementAt(2));
 			admin.setDateJoined(Calendar.getInstance());
-			admin.setPermissionTier(1);
+			admin.setPermissionTier(Admin.ADMIN_TIER_SYS_MOD);
 			
 			try {
 				AdminRepository.addAdmin(admin);
@@ -245,7 +245,7 @@ public class SystemAdminUsersTab extends JPanel {
 			admin.setPassword(userVector.elementAt(1));
 			admin.setEmail(userVector.elementAt(2));
 			admin.setDateJoined(Calendar.getInstance());
-			admin.setPermissionTier(2);
+			admin.setPermissionTier(Admin.ADMIN_TIER_GAME_MOD);
 			
 			try {
 				AdminRepository.addAdmin(admin);
