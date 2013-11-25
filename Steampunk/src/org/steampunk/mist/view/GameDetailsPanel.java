@@ -17,6 +17,7 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 
 import java.awt.Component;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -24,14 +25,13 @@ import javax.swing.UIManager;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Admin;
+import org.steampunk.mist.model.Clan;
 import org.steampunk.mist.model.Comment;
 import org.steampunk.mist.model.Game;
-import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
+import org.steampunk.mist.repository.ClanRepository;
 import org.steampunk.mist.repository.CommentRepository;
 import org.steampunk.mist.repository.GameCopyRepository;
-import org.steampunk.mist.repository.GameRepository;
-import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.view.list.AchievementListPanel;
 import org.steampunk.mist.view.list.CommentListPanel;
@@ -90,8 +90,18 @@ public class GameDetailsPanel extends JPanel {
 		mCreateClanButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
-				System.out.println("implement (create clan)");	
+				System.out.println("implement (create clan)");
+				String clanName = JOptionPane.showInputDialog("Enter clan name", null);
+				if (clanName != null && !clanName.isEmpty()) {
+					String username = AccountManager.getInstance().getCurrentUser().getUsername();
+					Clan clan = new Clan(clanName, "", username, mGame.getGameID());
+					try {
+						ClanRepository.addClan(clan);
+						ClanRepository.addClanMember(clanName, mGame.getGameID(), username, Calendar.getInstance());
+					} catch (RepositoryErrorException e) {
+						JOptionPane.showMessageDialog(null, "Clan name invalid or taken");
+					}
+				}
 			}
 		});
 		
@@ -109,7 +119,6 @@ public class GameDetailsPanel extends JPanel {
 								JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (RepositoryErrorException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(GameDetailsPanel.this, "Unknown database error occurred", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -202,6 +211,23 @@ public class GameDetailsPanel extends JPanel {
 		
 		mCommentListPanel = new CommentListPanel();
 		panel_4.add(mCommentListPanel, BorderLayout.CENTER);
+		mCommentListPanel.setAddCommentButtonListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String commentStr = JOptionPane.showInputDialog("Enter comment", null);
+				if (commentStr != null && !commentStr.isEmpty()) {
+					Comment comt = new Comment(commentStr, 
+							AccountManager.getInstance().getCurrentUser().getUsername(),
+							mGame.getGameID(), Calendar.getInstance());
+					try {
+						CommentRepository.addComment(comt);
+						mCommentListPanel.addComment(comt);
+					} catch (RepositoryErrorException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		
 		// This panel will hold the achievements and keys views
 		JPanel panel_5 = new JPanel();

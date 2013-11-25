@@ -201,11 +201,18 @@ public class UserRepository {
 		}
 	}
 	
+	public static void deleteUser(User user) throws RepositoryErrorException {
+		DatabaseManager dbm = DatabaseManager.getInstance();
+		try {
+			dbm.updatePrepared("DELETE FROM " + DatabaseSchema.TABLE_NAME_USERS
+					+" WHERE username = ?", user.getUsername());
+		} catch (SQLException e) {
+			throw new RepositoryErrorException(e.getMessage());
+		}
+	}
+	
 	public static class UserNotFoundException extends Exception{
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 3762770524381364592L;	
 		
 		UserNotFoundException(String reason) {
