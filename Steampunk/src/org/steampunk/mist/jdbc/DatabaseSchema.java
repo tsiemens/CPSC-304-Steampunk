@@ -1,3 +1,4 @@
+
 package org.steampunk.mist.jdbc;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class DatabaseSchema {
 	public static final String CREATE_TABLE_ACHIEVEMENTS =	
 		"CREATE TABLE " + TABLE_NAME_ACHIEVEMENTS
 		+" (achievementName VARCHAR(50),"
-		+" achievementDesc VARCHAR(140),"
+		+" achievementDescription VARCHAR(140),"
 		+" gameID INTEGER NOT NULL,"
 		+" points INTEGER,"
 		+" PRIMARY KEY (achievementName, gameID),"
@@ -44,7 +45,8 @@ public class DatabaseSchema {
 		+"passSalt RAW(8) NOT NULL,"
 		+"email VARCHAR(50) UNIQUE NOT NULL,"
 		+"dateJoined DATE,"
-		+"PRIMARY KEY (username))";
+		+"PRIMARY KEY (username),"
+		+"CONSTRAINT email_constraint CHECK(email LIKE '%@%.%'))";
 	
 	public static final String CREATE_TABLE_PLAYERS =
 		"CREATE TABLE " + TABLE_NAME_PLAYERS
@@ -142,13 +144,12 @@ public class DatabaseSchema {
 		+"FOREIGN KEY (achievementName, gameID) REFERENCES Achievements "
 			+"ON DELETE CASCADE)";
 	
-	
 	public static final String CREATE_VIEW_AVERAGE_COMMENT_LENGTH = 
 			"CREATE VIEW " + VIEW_NAME_AVERAGE_COMMENT_LENGTH + " as "
 			+ "SELECT gameID, AVG(LENGTH(text)) as length "
 			+ "FROM " + TABLE_NAME_COMMENTS
 			+ " GROUP BY gameID";
-
+	
 	/**
 	 * @return A List of table names, ordered the same as would be run to create them.
 	 */
@@ -177,7 +178,6 @@ public class DatabaseSchema {
 		views.add(VIEW_NAME_AVERAGE_COMMENT_LENGTH);
 		return views;
 	}
-	
 	
 	
 	/**
@@ -211,3 +211,4 @@ public class DatabaseSchema {
 		return viewStatements;
 	}
 }
+

@@ -1,6 +1,7 @@
 package org.steampunk.mist.view;
 
 import java.awt.Font;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -22,6 +23,9 @@ public class ClanDetailsPanel extends JPanel{
 	private JLabel mClanNameLabel;
 	
 	private Clan mClan;
+	
+	Vector<String> mSharedGames;
+	JList<String> mSharedGamesList;
 	
 	public ClanDetailsPanel() {
 		createView();
@@ -52,17 +56,22 @@ public class ClanDetailsPanel extends JPanel{
 		mClanMemberCountLabel.setBounds(175, 152, 83, 14);
 		add(mClanMemberCountLabel);
 		
+		// SHARED GAMES
+		
 		JLabel lblSharedGames = new JLabel("Shared Games: ");
 		lblSharedGames.setBounds(10, 177, 122, 14);
 		add(lblSharedGames);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 202, 248, 77);
-		add(scrollPane);
+		mSharedGamesList = new JList<String>();
+		mSharedGames = new Vector<String>();
+		mSharedGamesList.setListData(mSharedGames);
+		mSharedGamesList.setVisible(false);
 		
-		JList list = new JList();
-		scrollPane.setViewportView(list);
-	
+		JScrollPane sharedGames_scrollPane = new JScrollPane();
+		sharedGames_scrollPane.setBounds(10, 202, 248, 77);
+		add(sharedGames_scrollPane);
+		
+		sharedGames_scrollPane.setViewportView(mSharedGamesList);
 		
 	}
 	
@@ -75,6 +84,7 @@ public class ClanDetailsPanel extends JPanel{
 		int memberCount = 0;
 		try {
 			memberCount = ClanRepository.getClanMemberCount(mClan.getClanName(), mClan.getClanGameID());
+			mSharedGames = ClanRepository.getSharedGames(mClan.getClanName(), mClan.getClanGameID());
 		} catch (RepositoryErrorException e1) {
 			e1.printStackTrace();
 		} catch (ClanNotFoundException e1) {
@@ -85,6 +95,8 @@ public class ClanDetailsPanel extends JPanel{
 			mClanNameLabel.setText(mClan.getClanName());
 			mClanMoDTextArea.setText(mClan.getMoD());
 			mClanMemberCountLabel.setText( String.valueOf(memberCount) );
+			mSharedGamesList.setListData(mSharedGames);
+			mSharedGamesList.setVisible(true);
 		}
 	}
 }
