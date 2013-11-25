@@ -136,6 +136,18 @@ public class DatabaseManager {
 				return false;
 			}
 		}
+		
+		List<String> views = DatabaseSchema.getViewNames();
+
+		for (String view : views){
+			rs = stmt.executeQuery("SELECT view_name FROM user_views WHERE UPPER(view_name) = '"
+					+view.toUpperCase() + "'");
+			if(!rs.next()){
+				System.out.println("\nDatabase invalid: " + view.toUpperCase() + " view not found.");
+				stmt.close();
+				return false;
+			}
+		}
 
 		System.out.println("done.");
 		stmt.close();
@@ -154,6 +166,17 @@ public class DatabaseManager {
 			// Drop all relevant tables
 			Statement stmt = mDbConnection.createStatement();
 			ResultSet rs;
+
+			List<String> views = DatabaseSchema.getViewNames();
+			Collections.reverse(views);
+			for (String view : views){
+				rs = stmt.executeQuery("SELECT view_name FROM user_views WHERE UPPER(view_name) = '"
+						+ view.toUpperCase() + "'");
+				if(rs.next()){
+					System.out.println("Dropping " + view.toUpperCase() + " view");
+					stmt.execute("DROP VIEW "+ view);
+				}
+			}
 			
 			List<String> tables = DatabaseSchema.getTableNames();
 			Collections.reverse(tables);
@@ -162,9 +185,10 @@ public class DatabaseManager {
 						+table.toUpperCase() + "'");
 				if(rs.next()){
 					System.out.println("Dropping " + table.toUpperCase() + " table");
-					stmt.execute("DROP TABLE "+table);
+					stmt.execute("DROP TABLE "+ table);
 				}
 			}
+						
 			
 			stmt.close();
 			System.out.println("done.");
@@ -192,6 +216,13 @@ public class DatabaseManager {
 			for (String statement : createStatements){
 				System.out.println(statement);
 				stmt.executeUpdate(statement);
+			}
+			
+			// Create views
+			List<String> createViewStatements = DatabaseSchema.getCreateViewStatements();
+			for (String viewStatement : createViewStatements){
+				System.out.println(viewStatement);
+				stmt.executeUpdate(viewStatement);
 			}
 			
 			stmt.close();

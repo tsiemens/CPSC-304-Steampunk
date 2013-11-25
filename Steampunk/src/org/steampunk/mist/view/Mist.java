@@ -137,8 +137,10 @@ public class Mist extends JFrame implements ChangeListener{
 	
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
-		if (mGameLibTab != null)
+		if (AccountManager.getInstance().getCurrentUser() != null){
+			if (mGameLibTab != null)
 				mGameLibTab.refreshGameList();
+		}
 	}
 }
 

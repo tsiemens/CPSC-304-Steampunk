@@ -17,6 +17,7 @@ public class DatabaseSchema {
 	public static final String TABLE_NAME_ADMINISTRATES = "administrates";
 	public static final String TABLE_NAME_IS_MEMBER = "isMember";
 	public static final String TABLE_NAME_HAS_EARNED = "hasEarned";
+	public static final String VIEW_NAME_AVERAGE_COMMENT_LENGTH = "acl";
 	
 	public static final String CREATE_TABLE_GAMES = 
 		"CREATE TABLE " + TABLE_NAME_GAMES
@@ -140,6 +141,13 @@ public class DatabaseSchema {
 			+"ON DELETE CASCADE,"
 		+"FOREIGN KEY (achievementName, gameID) REFERENCES Achievements "
 			+"ON DELETE CASCADE)";
+	
+	
+	public static final String CREATE_VIEW_AVERAGE_COMMENT_LENGTH = 
+			"CREATE VIEW " + VIEW_NAME_AVERAGE_COMMENT_LENGTH + " as "
+			+ "SELECT gameID, AVG(LENGTH(text)) as length "
+			+ "FROM " + TABLE_NAME_COMMENTS
+			+ " GROUP BY gameID";
 
 	/**
 	 * @return A List of table names, ordered the same as would be run to create them.
@@ -162,6 +170,17 @@ public class DatabaseSchema {
 	}
 	
 	/**
+	 * @return A list of view names, ordered the same as would be run to create them.
+	 */
+	public static List<String> getViewNames(){
+		ArrayList<String> views = new ArrayList<String>(1);
+		views.add(VIEW_NAME_AVERAGE_COMMENT_LENGTH);
+		return views;
+	}
+	
+	
+	
+	/**
 	 * @return a List of create table statements, in the order they must be
 	 * run, to preserve reference integrity
 	 */
@@ -180,5 +199,15 @@ public class DatabaseSchema {
 		statements.add(CREATE_TABLE_IS_MEMBER);
 		statements.add(CREATE_TABLE_HAS_EARNED);
 		return statements;
+	}
+	
+	/**
+	 * @return a List of create view statements, in the order they must be
+	 * run, to preserve reference integrity
+	 */
+	public static List<String> getCreateViewStatements(){
+		ArrayList<String> viewStatements = new ArrayList<String>(1);
+		viewStatements.add(CREATE_VIEW_AVERAGE_COMMENT_LENGTH);
+		return viewStatements;
 	}
 }
