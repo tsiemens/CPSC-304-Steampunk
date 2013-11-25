@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.steampunk.mist.jdbc.DatabaseManager;
 import org.steampunk.mist.jdbc.DatabaseSchema;
 import org.steampunk.mist.model.GameCopy;
+import org.steampunk.mist.repository.GameRepository.GameNameIdPair;
 
 public class GameCopyRepository {
 	public static final String FIELD_GAMEKEY = "gameKey";
@@ -244,11 +245,11 @@ public class GameCopyRepository {
 
 
 	// to get the name of games being administered
-	public static Vector<String> getGameAdministered(String adminName) throws RepositoryErrorException{
+	public static Vector<GameNameIdPair> getGameAdministered(String adminName) throws RepositoryErrorException{
 		DatabaseManager dbm = DatabaseManager.getInstance();
 		ResultSet rs;
 		try {
-			rs = dbm.queryPrepared("SELECT g.gameName"
+			rs = dbm.queryPrepared("SELECT g.gameName, g.gameID"
 					+" FROM "+ DatabaseSchema.TABLE_NAME_GAMES + " g, "
 					+ DatabaseSchema.TABLE_NAME_ADMINISTRATES + " a"
 					+" WHERE g.gameid = a.gameid and a.username = ?", adminName);
@@ -256,12 +257,11 @@ public class GameCopyRepository {
 			throw new RepositoryErrorException(e.getMessage());
 		}
 
-		Vector<String> gameNames = new Vector<String>();
+		Vector<GameNameIdPair> gameNames = new Vector<GameNameIdPair>();
 
 		try{
 			while (rs.next()){
-				gameNames.add(rs.getString(1));
-
+					gameNames.add(new GameNameIdPair(rs.getInt("gameID"), rs.getString("gameName")));
 			}
 
 		} catch (SQLException e) {

@@ -19,13 +19,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import org.steampunk.mist.AccountManager;
+import org.steampunk.mist.model.Game;
 import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.AdminRepository;
 import org.steampunk.mist.repository.CommentRepository;
 import org.steampunk.mist.repository.GameCopyRepository;
+import org.steampunk.mist.repository.GameRepository;
 import org.steampunk.mist.repository.PlayerRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.repository.UserRepository;
+import org.steampunk.mist.repository.GameRepository.GameNameIdPair;
+import org.steampunk.mist.repository.GameRepository.GameNotFoundException;
 import org.steampunk.mist.repository.UserRepository.UserNotFoundException;
 
 import java.awt.FlowLayout;
@@ -47,12 +51,13 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 	 */
 	private static final long serialVersionUID = 2155537548470194331L;
 	
-	Vector<String> mGamesAdministered;
+	Vector<GameNameIdPair> mGamesAdministered;
 	JLabel mGAmesAdminsteredLabel;
 	String administrator = AccountManager.getInstance().getCurrentUser().getUsername();
-	JList<String> mGamesList;
+	JList<GameNameIdPair> mGamesList;
 	String minOrMax;
 	String buttonChoosen;
+	GameDetailsPanel mGameDetailsPanel;
 	
 	public GameAdminTab() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -86,7 +91,7 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 				panel.add(scrollPane);
 				scrollPane.setPreferredSize(new Dimension(250, 230));
 				
-				mGamesList = new JList<String>();
+				mGamesList = new JList<GameNameIdPair>();
 				mGamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				mGamesList.addListSelectionListener(this);
 				
@@ -107,7 +112,10 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 				gbc_panel_1.fill = GridBagConstraints.BOTH;
 				gbc_panel_1.gridx = 2;
 				gbc_panel_1.gridy = 2;
-				add(panel_1, gbc_panel_1);				
+				add(panel_1, gbc_panel_1);	
+				mGameDetailsPanel = new GameDetailsPanel();
+				mGameDetailsPanel.setVisible(false);
+				panel_1.add(mGameDetailsPanel);
 				
 				JPanel panel_2 = new JPanel();
 				GridBagConstraints gbc_panel_2 = new GridBagConstraints();
@@ -140,7 +148,7 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 				}
 
 				
-				JLabel lblNewLabel_2 = new JLabel("average");
+				JLabel lblNewLabel_2 = new JLabel("Average Comment Length:");
 				GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
 				gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
 				gbc_lblNewLabel_2.gridx = 0;
@@ -219,7 +227,21 @@ public class GameAdminTab extends JPanel implements ListSelectionListener {
 	@Override
 	public void valueChanged(ListSelectionEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		if (!arg0.getValueIsAdjusting()){
+			System.out.println("Selected index: "+mGamesList.getSelectedIndex());
+			int gameid = mGamesAdministered.get(mGamesList.getSelectedIndex()).id;
+			try {
+				Game game = GameRepository.getGame(gameid);
+				mGameDetailsPanel.setGame(game);
+				mGameDetailsPanel.setVisible(true);
+			} catch (RepositoryErrorException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (GameNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 	}
 	
 	
