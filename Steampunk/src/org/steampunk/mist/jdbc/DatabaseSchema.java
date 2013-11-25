@@ -84,8 +84,7 @@ public class DatabaseSchema {
 		+"PRIMARY KEY (clanName, gameID),"
 		+"FOREIGN KEY (gameID) REFERENCES Games "
 			+"ON DELETE CASCADE,"
-		+"FOREIGN KEY (clanOwner) REFERENCES Players(username) "
-			+"ON DELETE CASCADE)";
+		+"FOREIGN KEY (clanOwner) REFERENCES Players(username) )";
 	
 	public static final String CREATE_TABLE_ARE_FRIENDS =
 		"CREATE TABLE " + TABLE_NAME_ARE_FRIENDS

@@ -263,7 +263,7 @@ public class LoginDialog extends JDialog {
 				login();
 			}
 		} catch (RepositoryErrorException e) {
-			JOptionPane.showMessageDialog(this, "Unknown error occured while communicating with the server.");
+			JOptionPane.showMessageDialog(this, "Error occured. Check inputs.");
 		}
 	}
 	

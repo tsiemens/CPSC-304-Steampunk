@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -17,8 +18,10 @@ import javax.swing.event.ChangeListener;
 
 import org.steampunk.mist.AccountManager;
 import org.steampunk.mist.model.Player;
+import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.AdminRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
+import org.steampunk.mist.repository.UserRepository;
 
 public class Mist extends JFrame implements ChangeListener{
 
@@ -29,6 +32,7 @@ public class Mist extends JFrame implements ChangeListener{
 	private int permissionTier;
 	
 	private GameLibraryTab mGameLibTab;
+	private ClansTab mClansTab;
 
 	/**
 	 * Create the application.
@@ -66,6 +70,16 @@ public class Mist extends JFrame implements ChangeListener{
 			}
 		});
 		mnMist.add(mntmLogout);
+		
+		mnMist.addSeparator();
+		JMenuItem mntmDelete = new JMenuItem("Delete Account");
+		mntmDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {				
+				showDeleteAccountDialog();			
+			}
+		});
+		mnMist.add(mntmDelete);
+		mnMist.addSeparator();
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
@@ -107,7 +121,8 @@ public class Mist extends JFrame implements ChangeListener{
 			addTab("Game Library", null, mGameLibTab, null);
 			addTab(AccountManager.getInstance().getCurrentUser().getUsername(), null,
 				new UserDetailsTab(), null);
-			addTab("Clans", null, new ClansTab(), null);
+			mClansTab = new ClansTab();
+			addTab("Clans", null, mClansTab, null);
 			addTab("Friends", null, new FriendsTab(), null);
 			tabbedPane.setSelectedIndex(1);
 		} else {
@@ -138,5 +153,25 @@ public class Mist extends JFrame implements ChangeListener{
 	public void stateChanged(ChangeEvent arg0) {
 		if (mGameLibTab != null)
 				mGameLibTab.refreshGameList();
+		
+		if (mClansTab != null) {
+			mClansTab.refreshJoinedClansList(AccountManager.getInstance().getCurrentUser().getUsername());
+		}
+		
+	}
+	
+	private void showDeleteAccountDialog() {
+		User cUser = AccountManager.getInstance().getCurrentUser();
+		int delete = JOptionPane.showConfirmDialog(this, "Really delete your account?");
+		if (delete == JOptionPane.OK_OPTION) {
+			try {
+				UserRepository.deleteUser(cUser);
+				AccountManager.getInstance().setCurrentUser(null);
+				tabbedPane.removeAll();
+				showLoginDialog();
+			} catch (RepositoryErrorException e) {
+				JOptionPane.showMessageDialog(this, "Could not delete account. If you own any clans, please trasnfer ownership first.");
+			}
+		}
 	}
 }
