@@ -154,6 +154,32 @@ public class DatabasePopulator {
 			demoCopy = new GameCopy("qx09m-8bg3k-sloee-dneh8", 1, "Anthony", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
 			
+			// extra: For testing shared games
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("xyb80-09dj7-dkeaq-de9cc", 1, "John Doe", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("ayb80-09dj7-dkeaq-de9cc", 2, "Kenny", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("byb80-09dj7-dkeaq-de9cc", 2, "Anthony", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("cyb80-09dj7-dkeaq-de9cc", 3, "John Doe", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("dyb80-09dj7-dkeaq-de9cc", 4, "Kenny", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
+			testDate.set(2013, 5, 28);
+			demoCopy = new GameCopy("eyb80-09dj7-dkeaq-de9cc", 5, "Anthony", testDate);
+			GameCopyRepository.addGameCopy(demoCopy);
+			
+			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo game copies "+e);
 		}
@@ -231,6 +257,13 @@ public class DatabasePopulator {
 			
 			testDate.set(2013, 5, 28);
 			ClanRepository.addClanMember("MyWayOrTheHighWay", 3, "Beanny", testDate);
+			
+			// extra: For testing shared games
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("FearNot", 1, "John Doe", testDate);
+			
+			testDate.set(2013, 5, 28);
+			ClanRepository.addClanMember("FearNot", 1, "Anthony", testDate);
 			
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add administrates "+e);
