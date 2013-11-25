@@ -176,11 +176,11 @@ public class DatabasePopulator {
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
-			demoComment = new Comment("How could this game get a 5 rating?  It�s not even good.", "Beanny", 2, now);
+			demoComment = new Comment("How could this game get a 5 rating?  It's not even good.", "Beanny", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
-			demoComment = new Comment("Just because you don�t like a game doesn�t mean it�s bad.", "John Doe", 2, now);
+			demoComment = new Comment("Just because you don't like a game doesn't mean it's bad.", "John Doe", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
