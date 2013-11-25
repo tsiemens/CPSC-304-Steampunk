@@ -2,7 +2,6 @@ package org.steampunk.mist.jdbc;
 
 import java.util.Calendar;
 
-import org.steampunk.mist.model.Achievement;
 import org.steampunk.mist.model.Admin;
 import org.steampunk.mist.model.Clan;
 import org.steampunk.mist.model.Comment;
@@ -10,7 +9,6 @@ import org.steampunk.mist.model.Game;
 import org.steampunk.mist.model.GameCopy;
 import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
-import org.steampunk.mist.repository.AchievementRepository;
 import org.steampunk.mist.repository.AdminRepository;
 import org.steampunk.mist.repository.ClanRepository;
 import org.steampunk.mist.repository.CommentRepository;
@@ -29,8 +27,8 @@ public class DatabasePopulator {
 		byte[] salt = User.generateSalt();
 		byte[] passhash = User.getHash("root", salt);
 		byte[] passhash2 = User.getHash("admin", salt);
-		Admin admin = new Admin(Admin.ADMIN_TIER_SYS_MOD, "root", passhash, salt, "root@root", Calendar.getInstance());
-		Admin adminGame = new Admin(Admin.ADMIN_TIER_GAME_MOD, "tier1admin", passhash2, salt, "tier1@admin", Calendar.getInstance());
+		Admin admin = new Admin(Admin.ADMIN_TIER_SYS_MOD, "root", passhash, salt, "root@root.root", Calendar.getInstance());
+		Admin adminGame = new Admin(Admin.ADMIN_TIER_GAME_MOD, "tier1admin", passhash2, salt, "tier1@admin.admin", Calendar.getInstance());
 		try {
 			AdminRepository.addAdmin(admin);
 			AdminRepository.addAdmin(adminGame);
@@ -155,14 +153,7 @@ public class DatabasePopulator {
 			testDate.set(2013, 0, 1);
 			demoCopy = new GameCopy("qx09m-8bg3k-sloee-dneh8", 1, "Anthony", testDate);
 			GameCopyRepository.addGameCopy(demoCopy);
-
-			testDate.set(2013, 0, 1);
-			demoCopy = new GameCopy("333-333-332", 5, "SWAG", testDate);
-			GameCopyRepository.addGameCopy(demoCopy);
 			
-			demoCopy = new GameCopy("333-333-334", 5, null, null);
-			GameCopyRepository.addGameCopy(demoCopy);
-
 		} catch (RepositoryErrorException e) {
 			System.err.println("Failed to add demo game copies "+e);
 		}
@@ -185,11 +176,11 @@ public class DatabasePopulator {
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
-			demoComment = new Comment("How could this game get a 5 rating?  It’s not even good.", "Beanny", 2, now);
+			demoComment = new Comment("How could this game get a 5 rating?  It's not even good.", "Beanny", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
-			demoComment = new Comment("Just because you don’t like a game doesn’t mean it’s bad.", "John Doe", 2, now);
+			demoComment = new Comment("Just because you don't like a game doesn't mean it's bad.", "John Doe", 2, now);
 			CommentRepository.addComment(demoComment);
 			now.add(Calendar.MILLISECOND, 10);
 			
@@ -219,28 +210,9 @@ public class DatabasePopulator {
 			System.err.println("Failed to add demo comments "+e);
 		}
 		
-		// ----- ACHIEVEMENTS -----
-		// ----- HAS EARNED -----
-		try {
-			Achievement demoAch = new Achievement(5, "New frame!", "Built a new frame", 5);
-			AchievementRepository.addAchievement(demoAch);
-			demoAch = new Achievement(5, "Blacksmith", "Built something in the foundry", 5);
-			AchievementRepository.addAchievement(demoAch);
-			demoAch = new Achievement(5, "Dedicated", "Joined a clan", 5);
-			AchievementRepository.addAchievement(demoAch);
-			demoAch = new Achievement(25, "For profit!", "Killed Alad V.", 5);
-			AchievementRepository.addAchievement(demoAch);
-			AchievementRepository.earnAchievement(demoAch, "SWAG");
-			demoAch = new Achievement(5, "Trollban", "Made 10 bounce pads at once", 5);
-			AchievementRepository.addAchievement(demoAch);
-			AchievementRepository.earnAchievement(demoAch, "SWAG");
-		} catch (RepositoryErrorException e) {
-			System.err.println("Failed to add demo achievements"+e);
-		}
-		
-		// ----- ARE FRIENDS -----
 		
 		// ----- CLAN MEMBERSHIPS (IS MEMBER) -----
+		
 		try {
 			
 			Calendar testDate = Calendar.getInstance();
@@ -261,8 +233,14 @@ public class DatabasePopulator {
 			ClanRepository.addClanMember("MyWayOrTheHighWay", 3, "Beanny", testDate);
 			
 		} catch (RepositoryErrorException e) {
-			System.err.println("Failed to add clan members "+e);
+			System.err.println("Failed to add administrates "+e);
 		}
+		
+		// ----- ACHIEVEMENTS -----
+		
+		// ----- ADMINS -----
+		
+		// ----- ARE FRIENDS -----
 		
 		// ----- ADMINISTRATES -----
 		
@@ -275,8 +253,10 @@ public class DatabasePopulator {
 			GameCopyRepository.addGameAdministered("tier1admin", 3);
 			
 		} catch (RepositoryErrorException e) {
-			System.err.println("Failed to add demo administrates "+e);
+			System.err.println("Failed to add demo comments "+e);
 		}
+		
+		// ----- HAS EARNED -----
 		
 		System.out.println("done.");
 	}
