@@ -28,10 +28,13 @@ import org.steampunk.mist.model.Admin;
 import org.steampunk.mist.model.Clan;
 import org.steampunk.mist.model.Comment;
 import org.steampunk.mist.model.Game;
+import org.steampunk.mist.model.GameCopy;
+import org.steampunk.mist.model.Player;
 import org.steampunk.mist.model.User;
 import org.steampunk.mist.repository.ClanRepository;
 import org.steampunk.mist.repository.CommentRepository;
 import org.steampunk.mist.repository.GameCopyRepository;
+import org.steampunk.mist.repository.GameRepository;
 import org.steampunk.mist.repository.RepositoryErrorException;
 import org.steampunk.mist.view.list.AchievementListPanel;
 import org.steampunk.mist.view.list.CommentListPanel;
@@ -81,7 +84,18 @@ public class GameDetailsPanel extends JPanel {
 		mEditTitleButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("implement (edit title)");	
+				try {
+					if (GameRepository.gameAdminedByUser(AccountManager.getInstance().getCurrentUser().getUsername(),
+							mGame.getGameID())) {
+						String title = JOptionPane.showInputDialog("Edit title", mGame.getGameName());
+						GameRepository.updateName(mGame.getGameID(), title);
+						mGame.setGameName(title);
+						mGameTitleLabel.setText(title);
+					}
+				} catch (RepositoryErrorException e) {
+					JOptionPane.showMessageDialog(null, "Error updating title");
+					e.printStackTrace();
+				}	
 			}
 		});
 		
@@ -151,8 +165,18 @@ public class GameDetailsPanel extends JPanel {
 		mEditDescButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
-				System.out.println("implement (edit desc)");	
+				try {
+					if (GameRepository.gameAdminedByUser(AccountManager.getInstance().getCurrentUser().getUsername(),
+							mGame.getGameID())) {
+						String desc = JOptionPane.showInputDialog("Edit description", mGame.getDescription());
+						GameRepository.updateDescription(mGame.getGameID(), desc);
+						mGame.setDescription(desc);
+						mDescriptionText.setText(desc);
+					}
+				} catch (RepositoryErrorException e) {
+					JOptionPane.showMessageDialog(null, "Error updating description");
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -175,8 +199,18 @@ public class GameDetailsPanel extends JPanel {
 		mEditRatingButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
-				System.out.println("implement (edit rating)");	
+				try {
+					if (GameRepository.gameAdminedByUser(AccountManager.getInstance().getCurrentUser().getUsername(),
+							mGame.getGameID())) {
+						String rating = JOptionPane.showInputDialog("Edit rating", mGame.getRating());
+						GameRepository.updateRating(mGame.getGameID(), rating);
+						mGame.setRating(rating);
+						mRatingLabel.setText(rating);
+					}
+				} catch (RepositoryErrorException e) {
+					JOptionPane.showMessageDialog(null, "Error updating rating");
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -196,8 +230,18 @@ public class GameDetailsPanel extends JPanel {
 		mEditPubButton.addActionListener(new ActionListener() {		
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO
-				System.out.println("implement (edit pub)");	
+				try {
+					if (GameRepository.gameAdminedByUser(AccountManager.getInstance().getCurrentUser().getUsername(),
+							mGame.getGameID())) {
+						String pub = JOptionPane.showInputDialog("Edit publisher", mGame.getPublisher());
+						GameRepository.updatePublisher(mGame.getGameID(), pub);
+						mGame.setDescription(pub);
+						mDescriptionText.setText(pub);
+					}
+				} catch (RepositoryErrorException e) {
+					JOptionPane.showMessageDialog(null, "Error updating publisher");
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -261,8 +305,14 @@ public class GameDetailsPanel extends JPanel {
 			boolean userOwnsGame = false;
 			User cUser = AccountManager.getInstance().getCurrentUser();
 			if (cUser instanceof Admin) {
-				// TODO check if admin owns this game
-				userAdminsGame = true;
+				try {
+					if (GameRepository.gameAdminedByUser(AccountManager.getInstance().getCurrentUser().getUsername(),
+							mGame.getGameID())) {
+						userAdminsGame = true;
+					}
+				} catch (RepositoryErrorException e) {
+					e.printStackTrace();
+				}
 			} else {
 				try {
 					userOwnsGame = GameCopyRepository.userOwnsGame(cUser.getUsername(), mGame.getGameID());
@@ -276,8 +326,8 @@ public class GameDetailsPanel extends JPanel {
 			mEditTitleButton.setVisible(userAdminsGame);
 			mEditRatingButton.setVisible(userAdminsGame);
 			
-			mCreateClanButton.setVisible(!userAdminsGame && userOwnsGame);
-			mBuyButton.setVisible(!userOwnsGame);
+			mCreateClanButton.setVisible(userOwnsGame);
+			mBuyButton.setVisible(!userOwnsGame && cUser instanceof Player);
 			
 			Vector<Comment> cv;
 			try {

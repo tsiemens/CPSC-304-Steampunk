@@ -140,7 +140,6 @@ public class Mist extends JFrame implements ChangeListener{
 			if (permissionTier == Admin.ADMIN_TIER_SYS_MOD) {
 				addTab(username, null, new UserDetailsTab(), null);
 				addTab("Users", null, new SystemAdminUsersTab(), null);
-				addTab("Games", null, new GameAdminTab(), null);
 			}
 			if (permissionTier == Admin.ADMIN_TIER_GAME_MOD) {
 				addTab(username, null, new UserDetailsTab(), null);
